@@ -4,7 +4,7 @@
 
 		public function __construct(){
 			//require the Default Config file
-			require_once '../system/configs/default.cfg';
+			require_once '../system/configs/app.cfg';
 		}
 
 		public function loadFiles($path, $step=""){

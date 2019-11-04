@@ -3,7 +3,18 @@
 	class Processor {
 
 		public function __construct() {
-			
+			require_once '../bootstrap/Autoloader.php';		
+		}
+
+		public function loadTable ($table) {
+            if (file_exists('../system/database/'.$table.'.dbs')) {
+				require_once DATABASE.$table.'.dbs';
+				return new WelcomeTbl\table();
+            }
+		}
+
+		public function render ($request, $response = []) {
+			require_once TEMPLATE.$request.'.tpl';
 		}
 	
 	}

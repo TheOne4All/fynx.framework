@@ -1,0 +1,15 @@
+<?php 
+
+    class Welcome extends Processor {
+
+        public function __construct() {
+
+        }
+
+        public function index($greetings = 'Guest') {
+            $welcomeTbl = $this->loadTable('Welcome');
+            $welcomeTbl->greetings = $greetings;
+            $this->render('Welcome', ['greetings' => $welcomeTbl->greetings]);
+        }
+    }
+?>

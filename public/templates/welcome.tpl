@@ -7,7 +7,7 @@
     color:#fff;
     top:30%;
     left:0;">Hello <em style="
-    color:#ff0000;"><?php if (isset($response['greetings'])){ echo $response['greetings']; } ?></em>! Welcome to FYNIX FrameWork Project</h1>
+    color:#ff0000;"><?php if (isset($response['greetings'])){ echo ucwords(strtolower($response['greetings'])); } ?></em>! Welcome to FYNIX FrameWork Project</h1>
 
     <div id="overlay" style="
     position: absolute; 
@@ -28,6 +28,6 @@
     top:0; left:0; 
     position:absolute; 
     z-index: 1;
-    background: lightblue url('../images/Phoenix-Flare.jpg') no-repeat fixed center;"></div>
+    background: lightblue url('http://localhost/fynix.framework/public/images/Phoenix-Flare.jpg') no-repeat fixed center;"></div>
     
 <?php include 'footer.tpl'; ?>

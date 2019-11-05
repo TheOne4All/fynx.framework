@@ -1,0 +1,11 @@
+<?php
+
+    class Welcome_tbl {
+
+        public $greetings = 'Guest'; 
+        public $firstname = 'Ama';
+        public $lastname = 'Eze';
+        public $email = 'amaeze@gmail.com';
+
+    }
+?>

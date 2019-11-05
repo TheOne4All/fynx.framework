@@ -3,13 +3,14 @@
 	class Processor {
 
 		public function __construct() {
-			require_once '../bootstrap/Autoloader.php';		
+			require_once '../mapping/Autoloader.php';		
 		}
 
 		public function loadTable ($table) {
             if (file_exists('../system/database/'.$table.'.dbs')) {
-				require_once DATABASE.$table.'.dbs';
-				return new WelcomeTbl\table();
+				$this->table = $table;
+				require_once DATABASE.$this->table.'.dbs';
+				return new $this->table;
             }
 		}
 

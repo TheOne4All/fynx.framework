@@ -1,5 +1,5 @@
 <?php 
 
-    require_once '../system/bootstrap/Autoloader.php';
+    require_once '../system/mapping/Autoloader.php';
 
 ?>

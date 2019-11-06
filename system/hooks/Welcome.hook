@@ -11,7 +11,7 @@
             if ($greetings != ''){
                 $welcomeTbl->greetings = $greetings;
             }          
-            $this->render('Welcome', ['greetings' => $welcomeTbl->greetings]);
+            $this->render('Welcome', ['greetings' => $welcomeTbl->greetings, 'name' => $welcomeTbl->name]);
         }
 
         public function getReport(){

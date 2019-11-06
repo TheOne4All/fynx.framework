@@ -11,7 +11,7 @@
             
             $url = $this->parserUrl();
 
-            //filters for Class/Module name
+            //filters for Class name
             if (file_exists('../system/hooks/'.$url[0].'.hook')) {
                 $this->module = $url[0];
                 unset($url[0]);

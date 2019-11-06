@@ -1,5 +1,7 @@
 Options -Multiviews
 
+AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
+
 RewriteEngine On 
 
 RewriteBase /fynix.framework/public

@@ -14,8 +14,5 @@
             $this->render('Welcome', ['greetings' => $welcomeTbl->greetings, 'name' => $welcomeTbl->name]);
         }
 
-        public function getReport(){
-            $this->render('student/report');
-        }
     }
 ?>

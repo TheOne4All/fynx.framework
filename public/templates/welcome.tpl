@@ -76,7 +76,7 @@
     <body>
         <div class="flex-center position-ref full-height">
                 <div class="center links">
-                    <a href="#">Welcome! <em><?php if (isset($response['greetings'])){ echo ucwords(strtolower($response['greetings'])); } ?></em></a> |
+                    <a href="#">Welcome! <em style="color:#fc575e;"><?php if (isset($response['greetings'])){ echo ucwords(strtolower($response['greetings'])); } ?></em></a> |
                     <a href="#">Documentation</a> |
                     <a href="#">News</a> |
                     <a href="#">Education</a> |
@@ -84,9 +84,7 @@
                 </div>
 
             <div class="content">
-                <div class="title m-b-md">
-                <?php echo strtoupper($response['name']); ?>
-                </div>
+                <div class="title m-b-md"><?php echo strtoupper($response['name']); ?></div>
 
                 <div class="links"><p>FYNIX Framework is developed by Jencube using simple computing architecture they coined (S.L.O - Storage Logic Output).</p></div>
             </div>

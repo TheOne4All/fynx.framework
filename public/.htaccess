@@ -1,5 +1,7 @@
 Options -Multiviews
 
+DirectoryIndex index.htm index.html index.php index.tpl
+
 AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
 
 RewriteEngine On 

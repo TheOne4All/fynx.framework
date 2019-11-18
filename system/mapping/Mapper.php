@@ -1,9 +1,24 @@
 <?php
-
+	/**
+	*
+	* The Mapper class is responsible for routing URL's to destinations,
+	* it is simple yet efficient. Works with the .htaccess file in the root folder.
+	*
+	* @version:       1.11.19
+	* @package:       FYNIX Framework
+	* @author:        Jencube Team
+	* @license:       http://opensource.org/licenses/gpl-license.php 
+	*                 GNU General Public License (GPL)
+	* @copyright:     Copyright (c) 2013 - 2020 Jencube
+	* @github:        @deusex0 & @TheOne4All
+	* @filesource:    system/mapping/Mapper.php
+	*
+    **/
+    
     class Mapper {
 
         //create the URL address properties using Libraries, Functions & Parameters
-        protected $module = 'welcome';
+        protected $module = 'pages';
         protected $hook = 'index';
         protected $props = [];
 

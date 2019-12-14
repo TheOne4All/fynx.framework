@@ -1,5 +1,388 @@
 <?php
+    
+/**
+*
+* This database class has a clean and common methods that works with various
+* types of database (such as: msSQL, mySQL, mySQLi and postgres) and PDO. It
+* has cache system integrated along side making it very effective and powerful
+* database class..
+*
+* @version: 3.12.19
+* @package Fynix Framework
+* @author: Jencube Team
+* @license: http://opensource.org/licenses/gpl-license.php
+* GNU General Public License (GPL)
+* @copyright: Copyright (c) 2013 - 2018 Jencube
+* @twitter: @deusex0 & @One_Oracle
+* @filesource system/database/database.lib
+*
+**/
+
+class Database {
+
+/**
+*
+* Database Type
+*
+* @access protected
+* @var string
+*
+**/
+protected $dbType;
+/**
+*
+* Database Host
+*
+* @access protected
+* @var string
+*
+**/
+protected $dbHost;
+/**
+*
+* Database Name
+*
+* @access protected
+* @var string
+*
+**/
+protected $dbName;
+/**
+*
+* Database User
+*
+* @access protected
+* @var string
+*
+**/
+protected $dbUsername;
+/**
+*
+* Database Password
+*
+* @access protected
+* @var string
+*
+**/
+protected $dbPassword;
+/**
+*
+* Database Port
+*
+* @access protected
+* @var integer
+*
+**/
+protected $dbPort = 3306;
+/**
+*
+* To make a remote connection
+*
+* @access private
+* @var bool
+*
+**/
+private $remote = FALSE;
+/**
+*
+* Database table columns charset
+*
+* @access public
+* @var string
+*
+**/
+var $dbCharset = 'utf8';
+/**
+*
+* Database table columns collate
+*
+* @access public
+* @var string
+*
+**/
+var $dbCollate = 'utf8_general_ci';
+/**
+*
+* To show database errors
+*
+* @access private
+* @var bool
+*
+**/
+private $displayError = FALSE;
+/**
+*
+* SQL query
+*
+* @access private
+* @var string
+*
+**/
+private $sqlQuery = NULL;
+/**
+*
+* Query results
+*
+* @access protected
+* @var mixed
+*
+**/
+protected $query = 0;
+/**
+*
+* Query fetch data
+*
+* @access protected
+* @var mixed
+*
+**/
+protected $queryResult = 0;
+/**
+*
+* Query time
+*
+* @access public
+* @var integer
+*
+**/
+public $queryTime = 0;
+/**
+*
+* Query count
+*
+* @access private
+* @var integer
+*
+**/
+var $numQueries = 0;
+/**
+*
+* Previous query row count
+*
+* @access public
+* @var integer
+*
+**/
+var $numRows = 0;
+/**
+*
+* Number of column in query result
+*
+* @access public
+* @var integer
+*
+**/
+var $numFields = 0;
+/**
+*
+* Count of affected rows by previous query
+*
+* @access public
+* @var integer
+*
+**/
+public $affectedRows = 0;
+/**
+*
+* Get row data affected by delete()
+*
+* @access public
+* @var object
+*
+**/
+public $affectedData = NULL;
+/**
+*
+* AUTO_INCREMENT generated ID by the previous query
+*
+* @access public
+* @var integer
+*
+**/
+var $insertID;
+/**
+*
+* Database connection link
+*
+* @access protected
+* @var integer
+*
+**/
+protected $conn;
+/**
+*
+* Use PHP Data Objects
+*
+* @access private
+* @var bool
+*
+**/
+private $PDO = FALSE;
+/**
+*
+* The last error during query
+*
+* @access protected
+* @var array
+*
+**/
+protected $errorMsg = array();
+/**
+*
+* To suppress/show errors
+*
+* @access protected
+* @var bool
+*
+**/
+protected $suppressErrors = FALSE;
+/**
+*
+* Database activities log
+*
+* @access public
+* @var string
+*
+**/
+var $logData = '';
+/**
+*
+* Log data directory
+*
+* @access private
+* @var string
+*
+**/
+private $logDir;
+/**
+*
+* Cache results
+*
+* @access private
+* @var bool
+*
+**/
+private $cache = TRUE;
+/**
+*
+* Cache encode
+*
+* @access private
+* @var string
+*
+**/
+private $cacheEncode = 'jsone';
+/**
+*
+* Cache decode
+*
+* @access private
+* @var string
+*
+**/
+private $cacheDecode = 'jsond';
+/**
+*
+* Cache filename & directory
+*
+* @access private
+* @var string
+*
+**/
+private $cacheFile;
+/**
+*
+* Cache file directory
+*
+* @access private
+* @var string
+*
+**/
+private $cacheDir;
+/**
+*
+* Cache name
+*
+* @access public
+* @var string
+*
+**/
+var $cacheName = NULL;
+/**
+*
+* Cache Unique ID
+*
+* @access private
+* @var string
+*
+**/
+private $cacheID = NULL;
+/**
+*
+* Cache age, the period of time cache is allow
+* to exists. Default is 5min
+*
+* @access public
+* @var integer
+*
+**/
+var $cacheAge = 300;
+/**
+*
+* Cache file last modified time.
+*
+* @access private
+* @var integer
+*
+**/
+private $cacheMod;
+/**
+*
+* Activate/Deactivate debugging
+*
+* @access private
+* @var bool
+*
+**/
+private $debug = TRUE;
+/**
+*
+* debug details
+*
+* @access public
+* @var array
+*
+**/
+var $querydebug = array();
+/**
+*
+* debugging query counter
+*
+* @access public
+* @var integer
+*
+**/
+var $queryCount;
+/**
+*
+* debug start time
+*
+* @access public
+* @var integer
+*
+**/
+var $startTime = 0;
+/**
+*
+* Class constructor initialization to set the class
+* properties and connection to the database
+*
+* @access public
+* @param array
+*
+**/
 
 
+}
 
 ?>

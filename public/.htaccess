@@ -1,8 +1,11 @@
+
+
 Options -Multiviews
 
 DirectoryIndex index.htm index.html index.php index.tpl
 
-AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
+# Make PHP code look like unknown types
+AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl .cfg .class .hook .log .cch
 
 RewriteEngine On 
 

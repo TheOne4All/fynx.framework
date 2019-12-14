@@ -1,0 +1,22 @@
+<?php
+
+/**
+*
+* Decription MySQLi
+*
+* @version: 3.12.19
+* @package Fynix Framework
+* @author: Jencube Team
+* @license: http://opensource.org/licenses/gpl-license.php
+* GNU General Public License (GPL)
+* @copyright: Copyright (c) 2013 - 2018 Jencube
+* @twitter: @deusex0 & @One_Oracle
+* @filesource system/database/database.lib
+*
+**/
+
+class MySQLi {
+    
+}
+
+?>

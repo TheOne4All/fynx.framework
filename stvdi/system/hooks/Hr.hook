@@ -1,0 +1,13 @@
+<?php
+
+class Hr extends Processor
+{
+
+    public function __construct()
+    { }
+
+    public function index()
+    {
+        $this->render('resources/hr/index');
+    }
+}

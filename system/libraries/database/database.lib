@@ -879,15 +879,15 @@ class FynxDatabase {
 
 }
 
-error_reporting(E_ALL | E_WARNING | E_NOTICE);
-ini_set('display_errors', TRUE);
+// error_reporting(E_ALL | E_WARNING | E_NOTICE);
+// ini_set('display_errors', TRUE);
 
 $sysConfigDir = '../../configs/system.cfg';
 
-//if ( file_exists( $sysConfigDir ) ) {
-  //echo "Yes";
-  //$sysConfig = require($sysConfigDir);
-//}
+// if ( file_exists( $sysConfigDir ) ) {
+  // echo "Yes";
+  // $sysConfig = require($sysConfigDir);
+// }
 $sysConfig = include($sysConfigDir);
 $fynxDatabase = new FynxDatabase($sysConfig['connections'][$sysConfig['default_db']]);
 

@@ -1,0 +1,45 @@
+<?php
+
+class Hr extends Processor
+{
+
+    public function __construct()
+    {
+    }
+
+    public function index()
+    {
+        $field = 'org_staff_id, org_staff_join , org_staff_fname, org_staff_mname, org_staff_lname, org_staff_gender, org_staff_email, org_staff_phone';
+        $allStaffs = $this->get_record('stv_org_staff')->go();
+        $allPositions = $this->get_record('roles')->go();
+        $allModulesGroup = $this->get_record('modules_group')->go();
+        // $demo1 = $this->join('stv_org_staff', 'org_staff_fname, org_staff_email')->to('stv_org_user', 'org_user_name')->using('org_staff_id')->get('left');
+        // $combo = $this->join('stv_org_staff')->to('stv_org_user')->go('cross');
+        // $allStaffs = $this->get_record('stv_org_staff', 'org_staff_id, org_staff_fname, org_staff_email')->get();
+        // $allUsers = $this->get_record('stv_org_user', 'org_user_id, org_user_email')->get();
+        // $combo = $this->union($demo1)->to($allStaffs)->go('union');
+        // var_dump($allStaffs);
+        // $this->with('allStaffs', $allStaffs)->show('resources/hr/index');
+        $this->with('allStaffs', $allStaffs)->with('allPositions', $allPositions)->with('allModulesGroup', $allModulesGroup)->show('resources/hr/index');
+    }
+
+    public function add()
+    {
+        $this->add_record('stv_org_staff', $_POST)->go();
+        $this->with('success', 'Staff Added Successfully!')->redirect('hr/index');
+    }
+
+    public function delete()
+    {
+        extract($_POST);
+        $this->delete_record('stv_org_staff', $_POST)->go();
+        $this->with('danger', 'Staff Deleted Successfully!')->redirect('hr/index');
+    }
+
+    public function update()
+    {
+        extract($_POST);
+        $this->update_record('stv_org_staff', $_POST)->where('org_staff_id', $org_staff_id)->go();
+        $this->with('success', 'Staff Updated Successfully!')->redirect('hr/index');
+    }
+}

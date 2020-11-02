@@ -6,9 +6,13 @@ AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
 
 RewriteEngine On 
 
-RewriteBase /fynix.framework/public
+RewriteBase /fynx.framework/public
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+
+ErrorDocument 403 /resources/pages/errors/403.tpl
+ErrorDocument 404 /resources/pages/errors/404.tpl
+ErrorDocument 500 /resources/pages/errors/500.tpl

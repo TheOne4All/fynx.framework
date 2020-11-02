@@ -1,0 +1,35 @@
+<?php
+
+class Students extends Processor
+{
+
+    public function __construct()
+    {
+    }
+
+    public function index()
+    {
+        $allStudents = $this->get_record('students')->go();
+        $this->with('allStudents', $allStudents)->show('resources/students/index');
+    }
+
+    public function add()
+    {
+        $this->add_record('students', $_POST)->go();
+        $this->with('success', 'Student Added Successfully!')->redirect('students/index');
+    }
+
+    public function delete()
+    {
+        extract($_POST);
+        $this->delete_record('students', $_POST)->go();
+        $this->with('danger', 'Student Deleted Successfully!')->redirect('students/index');
+    }
+
+    public function update()
+    {
+        extract($_POST);
+        $this->update_record('students', $_POST)->where('id', $id)->go();
+        $this->with('success', 'Student Updated Successfully!')->redirect('students/index');
+    }
+}

@@ -1,0 +1,633 @@
+<?php
+
+error_reporting(E_ALL | E_WARNING | E_NOTICE);
+ini_set('display_errors', TRUE);
+
+require_once '../system/configs/App.cfg';
+require_once 'Database.lib';
+require_once 'Template.lib';
+// require_once 'Users.lib';
+
+/**
+ *
+ * The Processor class is the engine room of all business logic and processing,
+ * it is the central processing unit that handles requests and responses in and
+ * out of the system making it a Core library of the framework.
+ *
+ * @version:       1.11.19
+ * @package:       FYNX Framework
+ * @author:        Jencube Team
+ * @license:       http://opensource.org/licenses/gpl-license.php 
+ *                 GNU General Public License (GPL)
+ * @copyright:     Copyright (c) 2013 - 2020 Jencube
+ * @github:        @deusex0 & @TheOne4All
+ * @filesource:    system/libraries/processor.lib
+ *
+ **/
+
+class Processor
+{
+	/**
+	 *
+	 * Name of the Current Template used
+	 *
+	 * @access protected
+	 * @var string
+	 *
+	 **/
+	protected $template_name = 'origin';
+
+	/**
+	 *
+	 * Holds array passed to rendered URL
+	 *
+	 * @access protected
+	 * @var array
+	 *
+	 **/
+	public $data = array();
+
+	/*
+    |--------------------------------------------------------------------------
+    | Connect to Database
+    |--------------------------------------------------------------------------
+    |
+    | This function Helps conneect to the database Interface Library.
+    |
+    */
+	public function connector()
+	{
+		$sysConfig = require '../system/configs/system.cfg';
+		$defaultDB = $sysConfig['connections'];
+		$database = new FynxDatabase($defaultDB[$sysConfig['default_db']]);
+		// var_dump($database);
+		return $database;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Render Template Layouts
+    |--------------------------------------------------------------------------
+    |
+    | This function Renders or Displays a requested template 
+    | Layout on the Screen.
+    |
+    */
+	public function show($page_request_url)
+	{
+		$supposedString = $page_request_url;
+		// make sure the path does not end with '/'
+		if (substr($page_request_url, -1) == '/') {
+			$page_request_url = substr($page_request_url, 0, -1);
+		}
+		if ($this->template_name != '') {
+			if (substr($this->template_name, -1) != '/') {
+				$this->template_name = $this->template_name . '/';
+			}
+		}
+
+		$this->page_request_url = DIR['templates'] . $this->template_name . strtolower($page_request_url) . '.tpl';
+
+		if (file_exists($this->page_request_url)) {
+			$template = new Template($this->page_request_url, $this->data);
+			$template->output();
+		} else {
+			print_r($supposedString);
+		}
+		exit;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Send Array Object with URL
+    |--------------------------------------------------------------------------
+    |
+	| Add Arrays or Object generated from Database with Selected URL
+	| to be rendered to on the screen.
+    |
+    */
+	public function with($key, $value)
+	{
+		$this->data[$key] = $value;
+		return $this;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Redirect to URL
+    |--------------------------------------------------------------------------
+    |
+    | Redirect to given URL parameter.
+    |
+    */
+	protected function redirect($url = NULL)
+	{
+		$get_data = '?';
+		if ($url != Null) {
+			if (!is_null($this->data)) {
+				foreach ($this->data as $key => $value) {
+					$get_data = $get_data . $key . "=" . $value . "&";
+				}
+			}
+			$get_data = substr($get_data, 0, -1);
+			header("Location: " . BASE['url'] . $url . $get_data);
+		} else {
+			$this->error();
+		}
+		exit;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Display Error Message
+    |--------------------------------------------------------------------------
+    |
+    | This function helps Display error message page.
+    |
+    */
+	public function error($data = NULL)
+	{
+		if (is_null($data) || !is_array($data)) {
+			$data = array(
+				'code' => '404',
+				'subject' => 'Page Not Found!',
+				'message' => 'This Page Template Layout you are looking for does not exist.'
+			);
+		}
+		$this->page_request_url = DIR['templates'] . $this->template_name . '/resources/pages/errors/index.tpl';
+		$template = new Template($this->page_request_url, $data);
+		$template->output();
+		exit;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Escape Special Character
+    |--------------------------------------------------------------------------
+    |
+	| This function helps Escape Special Character allowing them to be added 
+	| into the database.
+    |
+    */
+	public function escape_chr($string, $specialChar = array())
+	{
+		if (!isset($specialChar) || empty($specialChar)) {
+			$specialChar = array(
+				"'" => "\'", "/" => "\/", "," => "\,",
+			);
+		}
+
+		foreach ($specialChar as $needle => $replace) {
+			$string = str_replace($needle, $replace, $string);
+		}
+		return $string;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Get Table Records
+    |--------------------------------------------------------------------------
+    |
+	| Get all Records of a particular Table from the Database. Enter Table Name
+	| and Field List in the parameter provided  e.g: $table = 'school_tbl' and
+	| $field = 'id, name, email'. Leave Field Parameter to take Default value "*"
+    |
+    */
+	protected function get_record($table = NULL, $field = '*')
+	{
+		if (is_null($table)) {
+			$data = array(
+				'code' => '605',
+				'subject' => 'Missing Requested Data!',
+				'message' => 'There is no $_POST data array or Table name sent to this method. Check your send form.'
+			);
+			$this->error($data);
+		}
+		$this->field = $field;
+		$this->object = "SELECT $this->field FROM $table FORCE INDEX (PRIMARY)";
+		return $this;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Add Into Table Records
+    |--------------------------------------------------------------------------
+    |
+	| Add Records into a particular Table of a Database. Enter Table Name
+	| and $_POST constant object parameter to use method e.g: $table = 'school_tbl'
+	| and $request = $_POST.
+    |
+    */
+	protected function add_record($table = NULL, $request = NULL)
+	{
+		$field_stack = $value_stack = NULL;
+		if (is_null($request) || is_null($table)) {
+			$data = array(
+				'code' => '605',
+				'subject' => 'Missing Requested Data!',
+				'message' => 'There is no $_POST data array or Table name sent to this method. Check your send form.'
+			);
+			$this->error($data);
+		}
+		foreach ($request as $key => $value) {
+			$field_stack = $field_stack . "`" . $key . "`" . ", ";
+			$value = $this->escape_chr($value);
+			$value_stack = $value_stack . "'" . $value . "'" . ", ";
+		}
+		$field_stack = substr($field_stack, 0, -2);
+		$value_stack = substr($value_stack, 0, -2);
+		$this->object = "INSERT INTO {$table} ({$field_stack}) VALUES ({$value_stack})";
+		return $this;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Delete Table Records
+    |--------------------------------------------------------------------------
+    |
+	| Destroy Records in a particular Table of a Database. Enter Table Name
+	| and $_POST parameter to Delete from  e.g: $table = 'school_tbl' and
+	| $request = $_POST. Make sure your use extract($_POST) to enable the 
+	| use of where() method.
+    |
+    */
+	protected function delete_record($table = NULL, $request = NULL)
+	{
+		$where_stack = NULL;
+		if (is_null($request) || is_null($table)) {
+			$data = array(
+				'code' => '605',
+				'subject' => 'Missing Requested Data!',
+				'message' => 'There is no $_POST data array or Table name sent to this method. Check your send form.'
+			);
+			$this->error($data);
+		}
+		foreach ($request as $key => $value) {
+			$where_stack = $where_stack . $key . "=" . "'" . $this->escape_chr($value) . "' AND ";
+		}
+		$where_stack = substr($where_stack, 0, -5);
+		$this->object = "DELETE FROM $table WHERE $where_stack";
+		return $this;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Update Table Records
+    |--------------------------------------------------------------------------
+    |
+	| Update Records in a particular Table of a Database. Enter Table Name
+	| and $_POST parameter to Update from  e.g: $table = 'school_tbl' and
+	| $request = $_POST. Make sure your use extract($_POST) to enable the 
+	| use of where() method.
+    |
+    */
+	protected function update_record($table = NULL, $request = NULL)
+	{
+		$key_value_stack = NULL;
+		if (is_null($request) || is_null($table)) {
+			$data = array(
+				'code' => '605',
+				'subject' => 'Missing Requested Data!',
+				'message' => 'There is no $_POST data array or Table name sent to this method. Check your send form.'
+			);
+			$this->error($data);
+		}
+		foreach ($request as $key => $value) {
+			$key_value_stack = $key_value_stack . $key . "=" . "'" . $this->escape_chr($value) . "',";
+		}
+		$key_value_stack = substr($key_value_stack, 0, -1);
+		$this->object = "UPDATE $table SET $key_value_stack";
+		return $this;
+	}
+
+	protected function where($prop = NULL, $value = NULL, $opt = '=')
+	{
+		if (!is_null($prop) && !is_null($value) && $this->object != FALSE) {
+			$this->object = $this->object . " WHERE " . $prop . " " . $opt . " '" . $value . "'";
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function and($prop = NULL, $value = NULL, $opt = '=')
+	{
+		if (!is_null($prop) && !is_null($value) && $this->object != FALSE && strpos((string)$this->object, 'WHERE') !== TRUE) {
+			$this->object = $this->object . " AND " . $prop . " " . $opt . " '" . $value . "'";
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function or($prop = NULL, $value = NULL, $opt = '=')
+	{
+		if (!is_null($prop) && !is_null($value) && $this->object != FALSE && strpos((string)$this->object, 'WHERE') !== TRUE) {
+			$this->object = $this->object . " OR " . $prop . " " . $opt . " '" . $value . "'";
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function not($prop = NULL, $value = NULL, $opt = '=')
+	{
+		if ($this->object != FALSE && strpos((string)$this->object, 'WHERE') !== FALSE) {
+			$this->object = $this->object . " AND NOT " . $prop . " " . $opt . " '" . $value . "'";
+		} else {
+			$this->object = $this->object . " WHERE NOT " . $prop . " " . $opt . " '" . $value . "'";
+		}
+		if (!is_null($prop) && !is_null($value) && $this->object != FALSE) {
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Get String of Querys
+    |--------------------------------------------------------------------------
+    |
+	| Get String Value of Querys. Simply put at the end of a query with options.
+	| convert() contains four options; CROSS, INNER, LEFT and RIGHT. e.g. 
+	| get_record(table)->convert();
+    |
+    */
+	protected function get($queryType = NULL)
+	{
+		switch ($queryType) {
+			case 'cross':
+				return $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2;
+				break;
+			case 'inner':
+				return $this->object . " INNER JOIN " . $this->table2 . " " . $this->table2  . $this->option;
+				break;
+			case 'left':
+				return $this->object . " LEFT JOIN " . $this->table2 . " " . $this->table2  . $this->option;
+				break;
+			case 'right':
+				return $this->object . " RIGHT JOIN " . $this->table2 . " " . $this->table2  . $this->option;
+				break;
+
+			default:
+				return $this->object;
+				break;
+		}
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Get JOINED Table Records
+    |--------------------------------------------------------------------------
+    |
+	| Get all Records of different joined Tables from the Database. Four options
+	| can be used on the go() method; CROSS, INNER, LEFT and RIGHT. User join()
+	| method with to(), on() and using() e.g. 
+	| join('table1', 'T1-field1, T1-field2')->to(table2', 'T2-field1, T2-field2')
+	| ->on(T1-field, T2-field)->go('inner');
+    |
+    */
+	protected function join($table1, $fields = '*')
+	{
+		$this->conjoin = "join";
+		$selectedField = '';
+		if ($fields != "*") :
+			$fields = explode(",", $fields);
+			foreach ($fields as $key => $value) {
+				$selectedField  = $selectedField . $table1 . "." . trim($value) . ", ";
+			}
+			$selectedField  = "SELECT $selectedField";
+		else :
+			$selectedField = "SELECT $fields";
+		endif;
+		$this->object = $selectedField;
+		$this->table1 = $table1;
+		return $this;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | COMBINE TWO TableS
+    |--------------------------------------------------------------------------
+    |
+	| Get two tables and combine their records using the union() method along
+	| with the to() method. The combination is instantiated by the go() method
+	| having two options; UNION and ALL e.g. 
+	| union($query1)->to($query2)->go('union');
+    |
+    */
+	protected function union($table1)
+	{
+		$this->conjoin = "union";
+		if (!is_null($table1)) {
+			$this->table1 = $table1;
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function to($table2, $fields = NULL)
+	{
+		$conjoin = $this->conjoin;
+		$selectedField = '';
+		switch ($conjoin) {
+			case 'union':
+				if (!is_null($table2)) {
+					$this->table2 = $table2;
+					return $this;
+				} else {
+					$this->object = FALSE;
+					return $this;
+				}
+				break;
+
+			default:
+				if (!is_null($fields)) :
+					$fields = explode(",", $fields);
+					foreach ($fields as $key => $value) {
+						$selectedField  = $selectedField . $table2 . "." . trim($value) . ", ";
+					}
+				endif;
+				if (!empty($selectedField)) :
+					$selectedField = substr($selectedField, 0, -2);
+				endif;
+				$this->object = $this->object . $selectedField . " FROM " . $this->table1 . " " . $this->table1;
+				$this->table2 = $table2;
+				return $this;
+				break;
+		}
+	}
+
+	protected function on($a = NULL, $b = NULL)
+	{
+		if (!is_null($a) && !is_null($b)) {
+			$on  = " ON " . $this->table1 . "." . $a . " = " . $this->table2 . "." . $b;
+			$this->option = $on;
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function using($field = NULL)
+	{
+		if (!is_null($field)) {
+			$using  = " USING (" . $field . ")";
+			$this->option = $using;
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function search($searchString = NULL)
+	{
+		if ($this->field != '*' && !is_null($searchString) && strpos((string)$this->object, 'WHERE') !== TRUE) {
+			$searchFilterArray = explode(",", $this->field);
+			$counter = 1;
+			foreach ($searchFilterArray as $searchFilter) {
+				if ($counter == 1) : $queryParts[] = $searchFilter . ' LIKE ';
+				else : $queryParts[] = ' OR ' . $searchFilter . ' LIKE ';
+				endif;
+				$counter++;
+			}
+			$searchStringEdited = "'%" . $searchString . "%'";
+			$string = implode($searchStringEdited, $queryParts) . $searchStringEdited;
+			$this->object = $this->object . " WHERE (" . $string . ")";
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function order_by($order = NULL, $sort = 'DESC')
+	{
+		if (!is_null($order) && $this->object != FALSE) {
+			$this->object = $this->object . " ORDER BY " . $order . " " . $sort;
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	protected function limit($limit = NULL, $offset = NULL)
+	{
+		if (!is_null($limit) && $this->object != FALSE) {
+			if (!is_null($offset)) {
+				$offset = $offset . ", ";
+			}
+			$this->object = $this->object . " LIMIT " . $offset . $limit;
+			return $this;
+		} else {
+			$this->object = FALSE;
+			return $this;
+		}
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Trigger Query
+    |--------------------------------------------------------------------------
+    |
+    | This Method Triggers or Fires up a Query.
+    |
+    */
+	protected function go($type = NULL, $option = 'all')
+	{
+
+		$db = $this->connector();
+		switch ($type) {
+			case 'first':
+				echo "First Record Only!";
+				break;
+			case 'cross':
+				$this->object = $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2;
+				if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+					if (!empty($output)) : return $output;
+					else : return array();
+					endif;
+				endif;
+				break;
+			case 'inner':
+				$this->object =  $this->object . " INNER JOIN " . $this->table2 . " " . $this->table2  . $this->option;
+				if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+					if (!empty($output)) : return $output;
+					else : return array();
+					endif;
+				endif;
+				break;
+			case 'left':
+				$this->object =  $this->object . " LEFT JOIN " . $this->table2 . " " . $this->table2  . $this->option;
+				if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+					if (!empty($output)) : return $output;
+					else : return array();
+					endif;
+				endif;
+				break;
+			case 'right':
+				$this->object =  $this->object . " RIGHT JOIN " . $this->table2 . " " . $this->table2  . $this->option;
+				if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+					if (!empty($output)) : return $output;
+					else : return array();
+					endif;
+				endif;
+				break;
+			case 'union':
+				$this->object =  $this->table1 . " UNION " . $this->table2;
+				if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+					if (!empty($output)) : return $output;
+					else : return array();
+					endif;
+				endif;
+				break;
+			case 'all':
+				$this->object =  $this->table1 . " UNION ALL " . $this->table2;
+				if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+					if (!empty($output)) : return $output;
+					else : return array();
+					endif;
+				endif;
+				break;
+
+			default:
+				if (strpos(serialize($this->object), 'SELECT')) :
+					// $link = mysqli_connect("localhost", "root", "Password@1", "stvdi_dbs");
+					// $query = @mysqli_query($db, $this->object);
+					// $output = @mysqli_fetch_all($query, MYSQLI_BOTH);
+					// var_dump($db);
+					// return $output;
+
+					if ($db->query($this->object) === TRUE) : $output = $db->fetch($option);
+						if (!empty($output)) : return $output;
+						else : return array();
+						endif;
+					endif;
+				else :
+					$output = $db->query($this->object);
+					if ($output != NULL) :
+						print_r("<h3>WARNING!</h3>Please use the Redirect() function to call up your Requested Page");
+						return TRUE;
+					endif;
+				// echo $this->object;
+				endif;
+				$data = array(
+					'code' => '607',
+					'subject' => 'Schema / Query Error!',
+					'message' => 'Check your SQL Query Statement/Form assignment declarations for Errors or Table Schema Query Result is bool(FALSE). Also check your Database Table Structure for Type, Name, NULL values.'
+				);
+				$this->error($data);
+				break;
+		}
+	}
+}

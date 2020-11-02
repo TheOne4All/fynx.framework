@@ -1,0 +1,44 @@
+<?php
+
+class Auth extends Processor
+{
+
+    public function __construct()
+    {
+    }
+
+    public function signin()
+    {
+        $this->show('resources/pages/auth/signin');
+    }
+
+    public function signup()
+    {
+        $this->show('resources/pages/auth/signup');
+    }
+
+    public function login()
+    {
+        extract($_POST);
+        if ($email == 'amaezedan@gmail.com' && $password == 'Password@1') {
+            $this->redirect('dashboard/index');
+        } else {
+            $this->show('resources/pages/auth/signin');
+        }
+    }
+
+    public function lockscreen()
+    {
+        $this->show('resources/pages/auth/lockscreen');
+    }
+
+    public function reset()
+    {
+        $this->show('resources/pages/auth/reset');
+    }
+
+    public function signout()
+    {
+        $this->show('resources/pages/auth/signout');
+    }
+}

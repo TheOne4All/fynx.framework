@@ -191,7 +191,7 @@ class Template
 
     public function modal_field($field = NULL, $value = NULL)
     {
-        if (!is_null($field) && is_array(!is_null($value))) :
+        if (!is_null($field) && !is_array($value)) :
             $this->input = $this->input . "<input type='hidden' name='" . $field . "' value='" . $value . "'>";
         elseif (!is_null($field) && is_array($value)) :
             $this->data[$field] = $value;

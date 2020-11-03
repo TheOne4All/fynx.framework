@@ -7,23 +7,26 @@ $viewStaff = [
     'title' => 'Staff Record',
     'file' => 'origin/resources/hr/view.tpl',
     'size' => 'xl',
+    'classlist' => 'slide-up enable-scroll',
 ];
 
 $addStaff = [
     'name' => 'addStaff',
     'title' => 'Add Staff',
-    'sub_title' => 'Create a Single Staff Record',
+    'subtitle' => 'Create a Single Staff Record',
     'file' => 'origin/resources/hr/form.tpl',
     'url' => BASE['url'] . 'hr/add',
+    'classlist' => 'slide-up enable-scroll',
 ];
 $this->modal($addStaff)->modal_field('allPositions', $allPositions)->modal_field('allModulesGroup', $allModulesGroup)->modal_body()->modal_end();
 
 $editStaff = [
     'name' => 'editStaff',
     'title' => 'Edit Staff',
-    'sub_title' => 'Update a Single Staff Record',
+    'subtitle' => 'Update a Single Staff Record',
     'file' => 'origin/resources/hr/form.tpl',
     'url' => BASE['url'] . 'hr/update',
+    'classlist' => 'slide-up enable-scroll',
 ];
 
 $deleteStaff = [
@@ -31,8 +34,8 @@ $deleteStaff = [
     'title' => 'Delete Staff',
     'url' => BASE['url'] . 'hr/delete',
     'cancel' => 'Cancel',
-    'type' => 'stick-up',
     'size' => 'sm',
+    'classlist' => 'stick-up disable-scroll',
 ];
 ?>
 

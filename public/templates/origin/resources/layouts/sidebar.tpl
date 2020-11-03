@@ -5,39 +5,49 @@
     <div class="sidebar-overlay-slide from-top p-l-20" id="appMenu">
         <div class="row">
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/chrome.png" alt="Chrome" width="40px"><span class="fs-11">Chrome</span></a>
+                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/chrome.png" alt="Chrome" width="40px"><span
+                        class="fs-11">Chrome</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/ie.png" alt="IE" width="40px"><span class="fs-11">IE</span></a>
+                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/ie.png" alt="IE" width="40px"><span
+                        class="fs-11">IE</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/firefox.png" alt="Firefox" width="40px"><span class="fs-11">FireFox</span></a>
+                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/firefox.png" alt="Firefox" width="40px"><span
+                        class="fs-11">FireFox</span></a>
             </div>
         </div>
         <div class="row m-t-20">
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/safari.png" alt="Safari" width="40px"><span class="fs-11">Safari</span></a>
+                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/safari.png" alt="Safari" width="40px"><span
+                        class="fs-11">Safari</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/opera.png" alt="Opera" width="40px"><span class="fs-11">Opera</span></a>
+                <a href="#" class=""><img src="<?= DIR['media'] ?>/browser/opera.png" alt="Opera" width="40px"><span
+                        class="fs-11">Opera</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class="" style="color:brown;"><img src="<?= BASE['url'] ?>templates/origin/img/svgs/add_more.svg" alt="More" width="40px"></a>
+                <a href="#" class="" style="color:brown;"><img
+                        src="<?= BASE['url'] ?>templates/origin/img/svgs/add_more.svg" alt="More" width="40px"></a>
             </div>
         </div>
     </div>
 
     <div class="sidebar-header">
-        <img src="<?= LOGO['white'] ?>" alt="logo" class="brand" data-src="<?= LOGO['white'] ?>" data-src-retina="<?= LOGO['white'] ?>" width="auto" height="30">
+        <img src="<?= LOGO['white'] ?>" alt="logo" class="brand" data-src="<?= LOGO['white'] ?>"
+            data-src-retina="<?= LOGO['white'] ?>" width="auto" height="30">
         <div class="sidebar-header-controls float-right m-r-20">
-            <a class="btn btn-xs sidebar-slide-toggle btn-link m-l-10" data-pages-toggle="appMenu"><i class="feather icon-chevron-up fs-16"></i></a>
-            <a class="btn btn-xs sidebar-slide-toggle btn-link m-l-10" data-toggle-pin="sidebar"><i class="feather icon-toggle-right fs-16"></i></a>
+            <a class="btn btn-xs sidebar-slide-toggle btn-link m-l-10" data-pages-toggle="appMenu"><i
+                    class="feather icon-chevron-up fs-16"></i></a>
+            <a class="btn btn-xs sidebar-slide-toggle btn-link m-l-10" data-toggle-pin="sidebar"><i
+                    class="feather icon-toggle-right fs-16"></i></a>
         </div>
     </div>
 
     <div class="sidebar-menu">
         <div class="scroll-wrapper" style="position: relative;">
-            <ul class="p-t-20 p-b-20 menu-items scroll-content scroll-scrolly_visible" style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 694.4px;">
+            <ul class="p-t-20 p-b-20 menu-items scroll-content scroll-scrolly_visible"
+                style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 694.4px;">
                 <li class="">
                     <a href="<?= BASE['url'] ?>dashboard/index" class="">
                         <span class="title">Dashboard</span>

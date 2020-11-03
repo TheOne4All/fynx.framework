@@ -3,15 +3,17 @@ $search = [
     'name' => 'searchURL',
     'file' => 'origin/resources/layouts/searchoverlay.tpl',
     // 'url' => BASE['url'] . 'hr/index',
-    'type' => 'fill-in',
+    'classlist' => 'fill-in disable-scroll',
 ];
 $this->modal($search)->modal_body()->modal_end();
 ?>
 <div class="header">
-    <a href="#" class="visible btn-link toggle-sidebar d-lg-none header-icon feather icon-menu" data-toggle="sidebar"></a>
+    <a href="#" class="visible btn-link toggle-sidebar d-lg-none header-icon feather icon-menu"
+        data-toggle="sidebar"></a>
     <div class="">
         <div class="brand inline">
-            <img src="<?= LOGO['dark'] ?>" alt="logo" data-src="<?= LOGO['dark'] ?>" data-src-retina="<?= LOGO['dark'] ?>" width="auto" height="30">
+            <img src="<?= LOGO['dark'] ?>" alt="logo" data-src="<?= LOGO['dark'] ?>"
+                data-src-retina="<?= LOGO['dark'] ?>" width="auto" height="30">
         </div>
 
         <ul class=" d-lg-inline-block d-none notification-list no-margin d-lg-inline-block b-grey b-l b-r no-style
@@ -134,7 +136,8 @@ $this->modal($search)->modal_body()->modal_end();
             <!-- <li class="p-r-10 inline"><a href="#" class="header-icon feather icon-external-link"></a></li> -->
             <!-- <li class="p-r-10 inline"><a href="#" class="header-icon feather icon-share"></a></li> -->
         </ul>
-        <a href="#" class="search-link d-lg-inline-block d-none" data-toggle="modal" data-target="#searchURL"><i class="pg-search"></i>Type
+        <a href="#" class="search-link d-lg-inline-block d-none" data-toggle="modal" data-target="#searchURL"><i
+                class="pg-search"></i>Type
             anywhere to <span class="bold">search</span></a>
     </div>
 
@@ -143,9 +146,12 @@ $this->modal($search)->modal_body()->modal_end();
             <span class="bold">Lillian</span> <span class="">Isah</span>
         </div>
         <div class="dropdown pull-right d-lg-block d-none">
-            <button class="profile-dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="profile-dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="false">
                 <span class="thumbnail-wrapper d32 circular inline">
-                    <img src="<?= DIR['media'] ?>/user-profile/user-img.jpg" alt="" data-src="<?= DIR['media'] ?>/user-profile/user-img.jpg" data-src-retina="<?= DIR['media'] ?>/user-profile/user-img.jpg" width="32" height="32">
+                    <img src="<?= DIR['media'] ?>/user-profile/user-img.jpg" alt=""
+                        data-src="<?= DIR['media'] ?>/user-profile/user-img.jpg"
+                        data-src-retina="<?= DIR['media'] ?>/user-profile/user-img.jpg" width="32" height="32">
                 </span>
             </button>
             <div class="dropdown-menu dropdown-menu-right profile-dropdown" role="menu">
@@ -160,6 +166,7 @@ $this->modal($search)->modal_body()->modal_end();
                 </a>
             </div>
         </div>
-        <a href="#" class="header-icon feather icon-grid btn-link m-l-10 sm-no-margin d-inline-block" data-toggle="quickview" data-toggle-element="#quickview"></a>
+        <a href="#" class="header-icon feather icon-grid btn-link m-l-10 sm-no-margin d-inline-block"
+            data-toggle="quickview" data-toggle-element="#quickview"></a>
     </div>
 </div>

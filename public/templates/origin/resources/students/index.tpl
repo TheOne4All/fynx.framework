@@ -12,7 +12,7 @@ $viewStudent = [
 $addStudent = [
     'name' => 'addStudent',
     'title' => 'Add Student',
-    'sub_title' => 'Create a Single Student Record',
+    'subtitle' => 'Create a Single Student Record',
     'file' => 'origin/resources/students/form.tpl',
     'url' => BASE['url'] . 'students/add',
     'size' => 'xl',
@@ -22,7 +22,7 @@ $this->modal($addStudent)->modal_body()->modal_end();
 $editStudent = [
     'name' => 'editStudent',
     'title' => 'Edit Student',
-    'sub_title' => 'Update a Single Staff Record',
+    'subtitle' => 'Update a Single Staff Record',
     'file' => 'origin/resources/students/form.tpl',
     'url' => BASE['url'] . 'students/update',
     'size' => 'xl',
@@ -33,7 +33,7 @@ $deleteStudent = [
     'title' => 'Delete Student',
     'url' => BASE['url'] . 'students/delete',
     'cancel' => 'Cancel',
-    'type' => 'stick-up',
+    'classlist' => 'stick-up',
     'size' => 'sm',
 ];
 ?>

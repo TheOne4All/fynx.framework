@@ -153,11 +153,11 @@ class Template
     {
         if (!isset($para['title'])) : $para['title'] = NULL;
         endif;
-        if (!isset($para['sub_title'])) : $para['sub_title'] = NULL;
+        if (!isset($para['subtitle'])) : $para['subtitle'] = NULL;
+        endif;
+        if (!isset($para['classlist'])) : $para['classlist'] = NULL;
         endif;
         if (!isset($para['file'])) : $para['file'] = NULL;
-        endif;
-        if (!isset($para['type'])) : $para['type'] = 'slide-up';
         endif;
         if (!isset($para['size'])) : $para['size'] = 'md';
         endif;
@@ -177,13 +177,13 @@ class Template
             endif;
         endif;
         $this->title = $para['title'];
-        $this->sub_title = $para['sub_title'];
+        $this->subtitle = $para['subtitle'];
         $this->file = $para['file'];
         $this->url = $para['url'];
         $this->submit = $para['submit'];
         $this->cancel = $para['cancel'];
-        $this->type = $para['type'];
         $this->size = $para['size'];
+        $this->classlist = $para['classlist'];
         $this->input = NULL;
         $this->data = array();
         return $this;
@@ -203,10 +203,11 @@ class Template
 
     public function modal_body($data = NULL, $content = NULL)
     {
-        switch ($this->type) {
-            case 'fill-in':
+        $this->classlistArray = explode(' ', $this->classlist);
+        switch ($this->classlistArray) {
+            case in_array('fill-in', $this->classlistArray):
                 echo '    
-                <div class="modal fade ' . $this->type . ' disable-scroll" id="' . $this->name_key . '" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+                <div class="modal ' . $this->classlist . '" id="' . $this->name_key . '" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                         <i class="feather icon-x fs-16"></i>
                     </button>';
@@ -220,9 +221,9 @@ class Template
                 endif;
                 break;
 
-            case 'slide-right':
+            case in_array('slide-right', $this->classlistArray):
                 echo '    
-                <div class="modal fade ' . $this->type . ' disable-scroll" id="' . $this->name_key . '" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+                <div class="modal ' . $this->classlist . '" id="' . $this->name_key . '" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
                 <div class="modal-dialog modal-sm">
                 <div class="modal-content-wrapper">
                 <div class="modal-content bg-master-lightest">
@@ -236,7 +237,7 @@ class Template
 
             default:
                 echo '
-                <div class="modal fade ' . $this->type . ' " id="' . $this->name_key . '" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+                <div class="modal ' . $this->classlist . '" id="' . $this->name_key . '" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
                 <div class="modal-dialog modal-' . $this->size . '">
                 <div class="modal-content-wrapper">
                 <div class="modal-content bg-master-lightest">
@@ -245,13 +246,13 @@ class Template
                         <i class="feather icon-x fs-16"></i>
                     </button>';
                 if (!is_null($this->title)) :
-                    if (!is_null($this->sub_title)) : $no_margin = 'no-margin';
+                    if (!is_null($this->subtitle)) : $no_margin = 'no-margin';
                     else : $no_margin = '';
                     endif;
                     echo '<h5 class="' . $no_margin . '">' . $this->title . '</h5>';
                 endif;
-                if (!is_null($this->sub_title)) :
-                    echo '<p class="p-b-5">' . $this->sub_title . '</p>';
+                if (!is_null($this->subtitle)) :
+                    echo '<p class="p-b-5">' . $this->subtitle . '</p>';
                 endif;
                 echo '</div><div class="modal-body">';
                 break;
@@ -284,8 +285,8 @@ class Template
     public function modal_end($content = NULL)
     {
 
-        switch ($this->type) {
-            case 'fill-in':
+        switch ($this->classlistArray) {
+            case in_array('fill-in', $this->classlistArray):
                 if (!is_null($this->url)) :
                     echo '</form>';
                 endif;
@@ -295,7 +296,7 @@ class Template
                 echo "</div>";
                 break;
 
-            case 'slide-right':
+            case in_array('slide-right', $this->classlistArray):
                 if (!is_null($this->url)) :
                     echo '<button class="btn btn-cons btn-block" type="submit">' . $this->submit . '</button></form>';
                     if (!is_null($this->cancel)) :

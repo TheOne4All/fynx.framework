@@ -354,28 +354,6 @@ function TemplateOrigin() {
     }
   };
 
-  // Toggle Search Overlay Page
-  // this.togglesearchOverlayPage = function () {
-  //   if (document.querySelector("body [data-pages='search']")) {
-  //     const querySelectorResult = document.querySelector(
-  //       "body [data-pages='search']"
-  //     );
-  //     document
-  //       .querySelector(".overlay .overlay-close")
-  //       .addEventListener("click", function () {
-  //         querySelectorResult.classList.remove("show");
-  //         querySelectorResult.classList.add("hide");
-  //       });
-  //     document
-  //       .querySelector(".header .search-link")
-  //       .addEventListener("click", function () {
-  //         querySelectorResult.classList.remove("hide");
-  //         querySelectorResult.classList.add("show");
-  //       });
-  //   }
-  // };
-
-  // Toggle between Profile DropDown
   this.toggleProfileDropDown = function () {
     if (document.querySelector(".profile-dropdown-toggle")) {
       document
@@ -514,11 +492,11 @@ function TemplateOrigin() {
           targetModal.setAttribute("data-fetch", modalData);
           targetModal.classList.add("show");
           targetModal.style.display = "block";
-          if (targetModal.classList.contains("fill-in")) {
-            targetModal.style.overflow = "hidden";
-          } else {
-            targetModal.style.overflowY = "auto";
-          }
+          // if (targetModal.classList.contains("fill-in")) {
+          //   targetModal.style.overflow = "hidden";
+          // } else {
+          //   targetModal.style.overflowY = "auto";
+          // }
           document.querySelector("html").style.overflowY = "hidden";
         });
         targetModal
@@ -633,7 +611,6 @@ function TemplateOrigin() {
     this.menuBarList();
     this.toggleTabs();
     this.toggleModal();
-    // this.togglesearchOverlayPage();
     this.toggleProfileDropDown();
     this.toggleQuickView();
   };

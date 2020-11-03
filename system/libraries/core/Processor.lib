@@ -130,6 +130,7 @@ class Processor
 				}
 			}
 			$get_data = substr($get_data, 0, -1);
+			new Template();
 			header("Location: " . BASE['url'] . $url . $get_data);
 		} else {
 			$this->error();
@@ -230,7 +231,7 @@ class Processor
 			$this->error($data);
 		}
 		foreach ($request as $key => $value) {
-			$field_stack = $field_stack . "`" . $key . "`" . ", ";
+			$field_stack = $field_stack . "`" . trim($key) . "`" . ", ";
 			$value = $this->escape_chr($value);
 			$value_stack = $value_stack . "'" . $value . "'" . ", ";
 		}
@@ -263,7 +264,7 @@ class Processor
 			$this->error($data);
 		}
 		foreach ($request as $key => $value) {
-			$where_stack = $where_stack . $key . "=" . "'" . $this->escape_chr($value) . "' AND ";
+			$where_stack = $where_stack . trim($key) . "=" . "'" . $this->escape_chr($value) . "' AND ";
 		}
 		$where_stack = substr($where_stack, 0, -5);
 		$this->object = "DELETE FROM $table WHERE $where_stack";
@@ -293,7 +294,7 @@ class Processor
 			$this->error($data);
 		}
 		foreach ($request as $key => $value) {
-			$key_value_stack = $key_value_stack . $key . "=" . "'" . $this->escape_chr($value) . "',";
+			$key_value_stack = $key_value_stack . trim($key) . "=" . "'" . $this->escape_chr($value) . "',";
 		}
 		$key_value_stack = substr($key_value_stack, 0, -1);
 		$this->object = "UPDATE $table SET $key_value_stack";
@@ -610,7 +611,7 @@ class Processor
 				else :
 					$output = $db->query($this->object);
 					// echo $this->object;
-					if (!is_null($output) && $output !== FALSE) :
+					if ($output === TRUE) :
 						print_r("<h3>WARNING!</h3>Please use the Redirect() function to call up your Requested Page");
 						return TRUE;
 					endif;

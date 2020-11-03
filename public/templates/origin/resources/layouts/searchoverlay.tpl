@@ -5,7 +5,8 @@
 
     <div class="container-fluid m-t-15">
 
-        <img class="overlay-brand" src="<?= LOGO['dark'] ?>" alt="logo" data-src="<?= LOGO['dark'] ?>" data-src-retina="<?= LOGO['dark'] ?>" width="78" height="22">
+        <img class="overlay-brand" src="<?= LOGO['dark'] ?>" alt="logo" data-src="<?= LOGO['dark'] ?>"
+            data-src-retina="<?= LOGO['dark'] ?>" width="78" height="22">
         <!-- 
         <a href="#" class="close-icon-light overlay-close text-black fs-16">
             <i class="feather icon-x"></i>
@@ -14,7 +15,8 @@
     </div>
 
     <div class="container-fluid">
-        <input id="overlay-search" class="no-border overlay-search bg-transparent" placeholder="Search..." autocomplete="off" spellcheck="false">
+        <input id="overlay-search" class="no-border overlay-search bg-transparent" placeholder="Search..."
+            autocomplete="off" spellcheck="false">
         <br>
         <div class="inline-block">
             <div class="checkbox right">
@@ -40,13 +42,16 @@
 
                         <div class="thumbnail-wrapper d48 circular bg-success text-white inline m-t-10">
                             <div>
-                                <img width="50" height="50" src="assets/img/profiles/avatar2x.jpg" data-src="assets/img/profiles/avatar.jpg" data-src-retina="assets/img/profiles/avatar2x.jpg" alt="">
+                                <img width="50" height="50" src="<?= DIR['media'] ?>/user-profile/user-img.jpg"
+                                    data-src="<?= DIR['media'] ?>/user-profile/user-img.jpg"
+                                    data-src-retina="<?= DIR['media'] ?>/user-profile/user-img.jpg" alt="">
                             </div>
                         </div>
 
                         <div class="p-l-10 inline p-t-5">
-                            <h5 class="m-b-5"><span class="semi-bold result-name">ice cream</span> on pages</h5>
-                            <p class="hint-text">via john smith</p>
+                            <h5 class="m-b-5"><span class="semi-bold result-name">Educational</span> on
+                                <?= APP['name'] ?></h5>
+                            <p class="hint-text">via Lillian Isah</p>
                         </div>
                     </div>
 
@@ -58,9 +63,9 @@
                         </div>
 
                         <div class="p-l-10 inline p-t-5">
-                            <h5 class="m-b-5"><span class="semi-bold result-name">ice cream</span> related topics
+                            <h5 class="m-b-5"><span class="semi-bold result-name">Educational</span> related topics
                             </h5>
-                            <p class="hint-text">via pages</p>
+                            <p class="hint-text">via <?= APP['name'] ?></p>
                         </div>
                     </div>
 
@@ -73,8 +78,8 @@
                         </div>
 
                         <div class="p-l-10 inline p-t-5">
-                            <h5 class="m-b-5"><span class="semi-bold result-name">ice cream</span> music</h5>
-                            <p class="hint-text">via pagesmix</p>
+                            <h5 class="m-b-5"><span class="semi-bold result-name">Educational</span> Music</h5>
+                            <p class="hint-text">via Groove Music</p>
                         </div>
                     </div>
 
@@ -89,7 +94,7 @@
                         </div>
 
                         <div class="p-l-10 inline p-t-5">
-                            <h5 class="m-b-5"><span class="semi-bold result-name">ice cream</span> on facebook</h5>
+                            <h5 class="m-b-5"><span class="semi-bold result-name">Educational</span> on Facebook</h5>
                             <p class="hint-text">via facebook</p>
                         </div>
                     </div>
@@ -103,7 +108,7 @@
                         </div>
 
                         <div class="p-l-10 inline p-t-5">
-                            <h5 class="m-b-5">Tweats on<span class="semi-bold result-name"> ice cream</span></h5>
+                            <h5 class="m-b-5"><span class="semi-bold result-name"> Educational</span> on Twitter</h5>
                             <p class="hint-text">via twitter</p>
                         </div>
                     </div>
@@ -112,12 +117,12 @@
                     <div class="">
 
                         <div class="thumbnail-wrapper d48 circular text-white bg-danger inline m-t-10">
-                            <div><i class="feather icon-google-plus large-text "></i>
-                            </div>
+                            <div>G</div>
                         </div>
 
                         <div class="p-l-10 inline p-t-5">
-                            <h5 class="m-b-5">Circles on<span class="semi-bold result-name"> ice cream</span></h5>
+                            <h5 class="m-b-5"><span class="semi-bold result-name"> Educational</span> on Google-Plus
+                            </h5>
                             <p class="hint-text">via google plus</p>
                         </div>
                     </div>

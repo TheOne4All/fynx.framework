@@ -15,12 +15,14 @@
             <h3>Sign-In to Your Account</h3>
             <p>Enjoy the best of our educational services as you Sign-in to your account</p>
 
-            <form id="form-login" class="p-t-10" role="form" method="POST" action="<?= BASE['url'] ?>auth/login" novalidate="novalidate">
+            <form id="form-login" class="p-t-10" role="form" method="POST" action="<?= BASE['url'] ?>auth/verify"
+                novalidate="novalidate">
 
                 <div class="form-group form-group-default">
                     <label>Email</label>
                     <div class="controls">
-                        <input type="text" name="email" placeholder="Username or Email" class="form-control" required="" aria-required="true">
+                        <input type="text" name="email" placeholder="Username or Email" class="form-control" required=""
+                            aria-required="true">
                     </div>
                 </div>
 
@@ -28,7 +30,8 @@
                 <div class="form-group form-group-default">
                     <label>Password</label>
                     <div class="controls">
-                        <input type="password" class="form-control" name="password" placeholder="Credentials" required="" aria-required="true">
+                        <input type="password" class="form-control" name="password" placeholder="Credentials"
+                            required="" aria-required="true">
                     </div>
                 </div>
 
@@ -51,9 +54,12 @@
             <div class="pull-bottom">
                 <div class="m-r-30 m-t-10 p-b-20 clearfix">
                     <div class="col-sm-12 no-padding no-padding d-flex align-items-center justify-content-center">
-                        <p class="small no-margin flex-1">Sign-up an account <a href="<?= BASE['url'] ?>auth/signup"><b>Here</b></a>. If you have a facebook account, log
+                        <p class="small no-margin flex-1">Sign-up an account <a
+                                href="<?= BASE['url'] ?>auth/signup"><b>Here</b></a>. If you have a facebook account,
+                            log
                             into
-                            it for this process. Sign in with <a href="#"><b>Facebook</b></a> or <a href="#"><b>Google</b></a>
+                            it for this process. Sign in with <a href="#"><b>Facebook</b></a> or <a
+                                href="#"><b>Google</b></a>
                         </p>
                     </div>
                 </div>

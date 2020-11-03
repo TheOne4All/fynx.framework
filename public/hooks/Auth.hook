@@ -12,12 +12,7 @@ class Auth extends Processor
         $this->show('resources/pages/auth/signin');
     }
 
-    public function signup()
-    {
-        $this->show('resources/pages/auth/signup');
-    }
-
-    public function login()
+    public function verify()
     {
         extract($_POST);
         if ($email == 'amaezedan@gmail.com' && $password == 'Password@1') {
@@ -25,6 +20,18 @@ class Auth extends Processor
         } else {
             $this->show('resources/pages/auth/signin');
         }
+    }
+
+    public function signup()
+    {
+        $this->show('resources/pages/auth/signup');
+    }
+
+    public function register()
+    {
+        var_dump($_POST);
+        echo $this->add_record('stv_org', $_POST)->go();
+        $this->with('success', 'Registered Successfully!')->redirect('auth/signin');
     }
 
     public function lockscreen()

@@ -8,18 +8,20 @@
             <a href="#" class="text-info"><b>Facebook</b></a> or <a href="#" class="text-info"><b>Google</b></a>
         </p>
 
-        <form id="form-register" class="p-t-10" role="form" action="<?= BASE['url'] ?>auth/signin" novalidate="novalidate">
+        <form id="form-register" class="p-t-10" role="form" method="POST" action="<?= BASE['url'] ?>auth/register"
+            novalidate="novalidate">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group form-group-default">
                         <label>UserName</label>
-                        <input type="text" name="uname" placeholder="Unique Username" class="form-control" required="" aria-required="true">
+                        <input type="text" name="org_unique" placeholder="Unique Username" class="form-control"
+                            required="" aria-required="true">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group form-group-default">
                         <label>Institution Type</label>
-                        <select name="education_id" class="form-control">
+                        <select name="org_type_id" class="form-control">
                             <option value="1">Kindergarten/Primary/Secondary</option>
                             <option value="2">Tertiary Institutions</option>
                         </select>
@@ -30,23 +32,26 @@
                 <div class="col-md-12">
                     <div class="form-group form-group-default">
                         <label>Institution Name</label>
-                        <input type="text" name="name" placeholder="Rhoda Group of Schools International" class="form-control" required="" aria-required="true">
+                        <input type="text" name="org_name" placeholder="Rhoda Group of Schools International"
+                            class="form-control" required="" aria-required="true">
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-md-12">
                     <div class="form-group form-group-default">
                         <label>Password</label>
-                        <input type="password" name="pass" placeholder="Minimum of 4 Charactors" class="form-control" required="" aria-required="true">
+                        <input type="password" name="pass" placeholder="Minimum of 4 Charactors" class="form-control"
+                            required="" aria-required="true">
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group form-group-default">
                         <label>Email</label>
-                        <input type="email" name="email" placeholder="We will send loging details to you" class="form-control" required="" aria-required="true">
+                        <input type="email" name="org_email" placeholder="We will send loging details to you"
+                            class="form-control" required="" aria-required="true">
                     </div>
                 </div>
             </div>

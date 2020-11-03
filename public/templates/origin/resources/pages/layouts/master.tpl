@@ -33,6 +33,9 @@
     <!-- Customize theme default settings -->
     <?php require_once 'customizetheme.tpl'; ?>
 
+    <!-- Alert Display Notification -->
+    <?php $this->alert($_GET); ?>
+
     <!-- Get Content -->
     <?php require_once $this->master_content; ?>
 

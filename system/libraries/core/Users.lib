@@ -6,17 +6,17 @@ require_once 'Database.lib';
  * PHP Class to help database manipulation. It can be used as a user class, login class etc.
  *
  * @version: 3.12.19
- * @package FYNX Framework
+ * @package Fynix Framework
  * @author: Jencube Team
  * @license: GNU General Public License (GPL) http://opensource.org/licenses/gpl-license.php
  * @copyright: Copyright (c) 2013 - 2020 Jencube
  * @supportfile(s): database.lib
  * @twitter: @deusex0 & @One_Oracle
- * @filesource system/libraries/core/User.lib
+ * @filesource system/database/user.lib
  *
  **/
 
-class Users extends Database
+class Users extends FynxDatabase
 {
 
     /**
@@ -279,11 +279,12 @@ class Users extends Database
      * @param Array
      *
      **/
-    public function __construct()
+    public function __construct($data = NULL)
     {
-
-        // $this->db = new Database($data);
+        $this->db = new Database($data);
+        return $this;
     }
+
 
     /**
      *
@@ -311,8 +312,8 @@ class Users extends Database
      **/
     public function is_login()
     {
-        $sessionID = $this->get_session($this->$_sessionName, 'sessionID');
-        if ($this->get_session($this->sessionName, 'superUser') == 1)
+        $sessionID = $this->get_session($this->_sessionName, 'sessionID');
+        if ($this->get_session($this->_sessionName, 'superUser') == 1)
             $this->_is_superuser = TRUE;
 
         return (!$this->_posted) ? $this->_verify_session() : $this->verify_posted_data();
@@ -346,9 +347,9 @@ class Users extends Database
      **/
     private function session_exist()
     {
-        $session = $this->get_session($this->$_sessionName);
+        $session = $this->get_session($this->_sessionName);
         if ((isset($session) && ($session != "")) || $_COOKIE[$this->_cookieName]) {
-            if ($this->load_user_data($this->get_session($this->$_sessionName, 'ID')))
+            if ($this->load_user_data($this->get_session($this->_sessionName, 'ID')))
                 return TRUE;
         }
     }
@@ -431,7 +432,7 @@ class Users extends Database
     public function set_session($name, $value = NULL, $ID = NULL)
     {
         if (!isset($_SESSION[$name]))
-            @session_start;
+            @session_start();
 
         // Update the current session id with a newly generated one
         $this->generate_session_id();
@@ -452,7 +453,7 @@ class Users extends Database
      **/
     public function generate_session_id()
     {
-        if (!sset($_SESSION[$name]))
+        if (!isset($_SESSION['name']))
             @session_start();
 
         @session_regenerate_id();
@@ -470,7 +471,7 @@ class Users extends Database
      **/
     public function register_session($sessionData = array(), $name = NULL)
     {
-        if (!sset($_SESSION[$name]))
+        if (!isset($_SESSION[$name]))
             @session_start();
 
         // Update the current session id with a newly generated one
@@ -522,7 +523,6 @@ class Users extends Database
      **/
     public function logout()
     {
-        echo "this is good";
     }
 
     /**
@@ -534,18 +534,6 @@ class Users extends Database
      *
      **/
     public function logout_all()
-    {
-    }
-
-    /**
-     *
-     * Destroy current or all user information in session
-     *
-     * @access Public
-     * @return Boolean
-     *
-     **/
-    public function logout_all_()
     {
     }
 }

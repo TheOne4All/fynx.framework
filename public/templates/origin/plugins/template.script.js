@@ -497,14 +497,16 @@ function TemplateOrigin() {
           // } else {
           //   targetModal.style.overflowY = "auto";
           // }
-          document.querySelector("html").style.overflowY = "hidden";
+          document.querySelector("html").style.overflow = "hidden";
         });
         targetModal
           .querySelector(".close")
           .addEventListener("click", function () {
             targetModal.classList.remove("show");
-            targetModal.style.display = "none";
-            document.querySelector("html").style.overflowY = "scroll";
+            setTimeout(function () {
+              targetModal.style.display = "none";
+              document.querySelector("html").style.overflow = "auto";
+            }, 300);
           });
       }
     }

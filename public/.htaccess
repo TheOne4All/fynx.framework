@@ -6,8 +6,6 @@ AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
 
 RewriteEngine On 
 
-RewriteBase /GitHub/fynix.framework/public
-
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 

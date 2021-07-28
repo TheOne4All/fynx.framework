@@ -1,14 +1,23 @@
+<?php
+$search = [
+    'name' => 'searchURL',
+    'file' => 'origin/resources/layouts/searchoverlay.tpl',
+    // 'url' => BASE['url'] . 'hr/index',
+    'classlist' => 'fill-in disable-scroll',
+];
+$this->modal($search)->modal_body()->modal_end();
+?>
 <div class="header">
     <a href="#" class="visible btn-link toggle-sidebar d-lg-none header-icon feather icon-menu"
         data-toggle="sidebar"></a>
     <div class="">
         <div class="brand inline">
-            <img src="<?= MEDIA ?>b_logo.png" alt="logo" data-src="<?= MEDIA ?>b_logo.png"
-                data-src-retina="<?= MEDIA ?>b_logo.png" width="auto" height="30">
+            <img src="<?= FYNX_LOGO['dark'] ?>" alt="logo" data-src="<?= FYNX_LOGO['dark'] ?>"
+                data-src-retina="<?= FYNX_LOGO['dark'] ?>" width="auto" height="30">
         </div>
 
-        <ul
-            class="d-lg-inline-block d-none notification-list no-margin d-lg-inline-block b-grey b-l b-r no-style p-l-30 p-r-20">
+        <ul class=" d-lg-inline-block d-none notification-list no-margin d-lg-inline-block b-grey b-l b-r no-style
+            p-l-30 p-r-20">
             <!-- <li class="p-r-10 inline">
                 <div class="dropdown">
                     <a href="javascript:;" id="notification-center" class="header-icon feather icon-alert-circle"
@@ -127,7 +136,8 @@
             <!-- <li class="p-r-10 inline"><a href="#" class="header-icon feather icon-external-link"></a></li> -->
             <!-- <li class="p-r-10 inline"><a href="#" class="header-icon feather icon-share"></a></li> -->
         </ul>
-        <a href="#" class="search-link d-lg-inline-block d-none" data-toggle="search"><i class="pg-search"></i>Type
+        <a href="#" class="search-link d-lg-inline-block d-none" data-toggle="modal" data-target="#searchURL"><i
+                class="pg-search"></i>Type
             anywhere to <span class="bold">search</span></a>
     </div>
 
@@ -139,17 +149,20 @@
             <button class="profile-dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
                 <span class="thumbnail-wrapper d32 circular inline">
-                    <img src="<?= MEDIA ?>user-profile/user-img.jpg" alt=""
-                        data-src="<?= MEDIA ?>user-profile/user-img.jpg"
-                        data-src-retina="<?= MEDIA ?>user-profile/user-img.jpg" width="32" height="32">
+                    <img src="<?= FYNX_PUBLIC['url'] ?>media/user-profile/user-img.jpg" alt=""
+                        data-src="<?= FYNX_PUBLIC['url'] ?>media/user-profile/user-img.jpg"
+                        data-src-retina="<?= FYNX_PUBLIC['url'] ?>media/user-profile/user-img.jpg" width="32"
+                        height="32">
                 </span>
             </button>
             <div class="dropdown-menu dropdown-menu-right profile-dropdown" role="menu">
                 <a href="#" class="dropdown-item"><i class="feather icon-settings"></i> Settings</a>
                 <a href="#" class="dropdown-item"><i class="feather icon-help-circle"></i> Help Centre</a>
-                <a href="<?= LINK ?>auth/lockscreen" class="dropdown-item"><i class="feather icon-lock"></i> Lock
+                <a href="<?= FYNX_PUBLIC['url'] ?>auth/lockscreen" class="dropdown-item"><i
+                        class="feather icon-lock"></i>
+                    Lock
                     Screen</a>
-                <a href="<?= LINK ?>auth/signin" class="clearfix bg-master-lighter dropdown-item">
+                <a href="<?= FYNX_PUBLIC['url'] ?>auth/signin" class="clearfix bg-master-lighter dropdown-item">
                     <span class="pull-left">Logout</span>
                     <span class="pull-right"><i class="feather icon-power"></i></span>
                 </a>

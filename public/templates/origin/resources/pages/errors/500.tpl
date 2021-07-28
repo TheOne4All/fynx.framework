@@ -1,7 +1,4 @@
-<?php $this->extendTemplate('origin/resources/pages/layouts/master'); ?>
-
-<?php function get_content()
-{ ?>
+<!-- [begin-extend-template]origin/resources/pages/layouts/master[end] -->
 
 <div class="content ">
 
@@ -9,7 +6,7 @@
         <div class="error-container text-center">
             <h1 class="error-number">500</h1>
             <h2 class="semi-bold">Sorry but we couldnt find this page</h2>
-            <p class="p-b-10">This page you are looking for does not exsist <a href="#">Report this?</a>
+            <p class="p-b-10">This page you are looking for does not exist <a href="#">Report this?</a>
             </p>
             <div class="error-container-innner text-center">
                 <form class="error-form">
@@ -32,5 +29,3 @@
     </div>
 
 </div>
-
-<?php } ?>

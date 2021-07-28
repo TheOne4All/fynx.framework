@@ -1,7 +1,0 @@
-Options -Indexes
-
-IndexIgnore *
-
-AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
-
-ErrorDocument 403 http://localhost/fynix.framework/public/errors/error_403

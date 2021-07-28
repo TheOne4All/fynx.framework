@@ -1,9 +1,44 @@
-<?php $this->extendTemplate('origin/resources/layouts/master'); ?>
+<!-- [begin-extend-template]origin/resources/layouts/master[end] -->
 
-<?php function get_content()
-{ ?>
+<!-- Modal Window Layout -->
+<?php
+$viewStudent = [
+    'name' => 'viewStudent',
+    'title' => 'Student Record',
+    // 'file' => 'origin/resources/students/view.tpl',
+    'size' => 'xl',
+];
 
-<div class="content ">
+$addStudent = [
+    'name' => 'addStudent',
+    'title' => 'Add Student',
+    'subtitle' => 'Create a Single Student Record',
+    'file' => 'origin/resources/students/form.tpl',
+    'url' => FYNX_PUBLIC['url'] . 'students/add',
+    'size' => 'xl',
+];
+$this->modal($addStudent)->modal_body()->modal_end();
+
+$editStudent = [
+    'name' => 'editStudent',
+    'title' => 'Edit Student',
+    'subtitle' => 'Update a Single Staff Record',
+    'file' => 'origin/resources/students/form.tpl',
+    'url' => FYNX_PUBLIC['url'] . 'students/update',
+    'size' => 'xl',
+];
+
+$deleteStudent = [
+    'name' => 'deleteStudent',
+    'title' => 'Delete Student',
+    'url' => FYNX_PUBLIC['url'] . 'students/delete',
+    'cancel' => 'Cancel',
+    'classlist' => 'stick-up',
+    'size' => 'sm',
+];
+?>
+
+<div class="content">
 
     <div class="jumbotron" data-pages="parallax">
         <div class="row align-items-end container-fluid container-fixed-lg sm-p-l-0 sm-p-r-0 no-margin">
@@ -36,7 +71,7 @@
                 </div>
                 <div class="pull-right">
                     <div class="col-xs-6">
-                        <button id="show-modal" class="btn btn-cons"><i class="fa fa-plus"></i> Add row
+                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStudent"><i class="feather icon-plus"></i> Add Student
                         </button>
                     </div>
                 </div>
@@ -45,97 +80,46 @@
             <div class="card-body">
                 <div id="tableWithDynamicRows_wrapper" class="dataTables_wrapper no-footer">
                     <div>
-                        <table
-                            class="table table-striped table-hover demo-table-dynamic table-responsive-block dataTable no-footer"
-                            id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
+                        <table class="table table-striped table-responsive-block dataTable no-footer" id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
                             <thead>
                                 <tr role="row">
-                                    <th class="sorting_asc" tabindex="0" aria-controls="tableWithDynamicRows"
-                                        rowspan="1" colspan="1" aria-sort="ascending"
-                                        aria-label="App name: activate to sort column descending">App name</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tableWithDynamicRows" rowspan="1"
-                                        colspan="1" aria-label="Description: activate to sort column ascending"
-                                        style="width: 362.8px;">Description</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tableWithDynamicRows" rowspan="1"
-                                        colspan="1" aria-label="Price: activate to sort column ascending"
-                                        style="width: 227.6px;">Price</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tableWithDynamicRows" rowspan="1"
-                                        colspan="1" aria-label="Notes: activate to sort column ascending"
-                                        style="width: 294.8px;">Notes</th>
+                                    <th class="sorting_asc">FullName</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th class="sorting">Entry</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-
-                                <tr role="row" class="odd">
-                                    <td class="v-align-middle sorting_1">
-                                        <p>Angry Birds</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Description goes here</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>FREE</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Notes go here</p>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td class="v-align-middle sorting_1">
-                                        <p>Facebook</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Description goes here</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>FREE</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Notes go here</p>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="odd">
-                                    <td class="v-align-middle sorting_1">
-                                        <p>Foursquare</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Description goes here</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>FREE</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Notes go here</p>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="even">
-                                    <td class="v-align-middle sorting_1">
-                                        <p>Hyperlapse</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Description goes here</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>FREE</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Notes go here</p>
-                                    </td>
-                                </tr>
-                                <tr role="row" class="odd">
-                                    <td class="v-align-middle sorting_1">
-                                        <p>Twitter</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Description goes here</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>FREE</p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p>Notes go here</p>
-                                    </td>
-                                </tr>
+                                <?php
+                                foreach ($allStudents as $key => $value) { ?>
+                                    <tr role="row">
+                                        <td class="v-align-middle sorting_1 cursor" data-toggle="modal" data-target="#viewStudent<?= $key ?>">
+                                            <p><?php echo $value['lastname'] . ", " . $value['firstname'] . " " . $value['middlename']; ?>
+                                            </p>
+                                        </td>
+                                        <td class="v-align-middle">
+                                            <p><?php echo $value['email']; ?></p>
+                                        </td>
+                                        <td class="v-align-middle">
+                                            <p><?php echo $value['mobileno']; ?></p>
+                                        </td>
+                                        <td class="v-align-middle">
+                                            <p><?php echo $value['created_at']; ?></p>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-group" title="Edit" data-toggle="modal" data-target="#editStudent<?= $key ?>"><i class="feather icon-edit"></i></button>
+                                                <button type="button" class="btn btn-group" data-toggle="modal" data-target="#deleteStudent<?= $key ?>" title="Delete"><i class="feather icon-trash-2"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php
+                                    $this->modal($viewStudent, $key)->modal_body($allStudents[$key])->modal_end();
+                                    $this->modal($editStudent, $key)->modal_body($allStudents[$key])->modal_end();
+                                    $this->modal($deleteStudent, $key)->modal_field('id', $value['id'])->modal_body('Are you sure you want to proceed?')->modal_end();
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -143,19 +127,14 @@
                         <div>
                             <div class="dataTables_paginate paging_simple_numbers" id="tableWithDynamicRows_paginate">
                                 <ul class="">
-                                    <li class="paginate_button previous disabled" id="tableWithDynamicRows_previous"><a
-                                            href="#" aria-controls="tableWithDynamicRows" data-dt-idx="0"
-                                            tabindex="0"><i class="feather icon-chevron-left fs-16"></i></a></li>
-                                    <li class="paginate_button active"><a href="#" aria-controls="tableWithDynamicRows"
-                                            data-dt-idx="1" tabindex="0">1</a>
+                                    <li class="paginate_button previous disabled" id="tableWithDynamicRows_previous"><a href="#" aria-controls="tableWithDynamicRows" data-dt-idx="0" tabindex="0"><i class="feather icon-chevron-left fs-16"></i></a>
                                     </li>
-                                    <li class="paginate_button next disabled" id="tableWithDynamicRows_next"><a href="#"
-                                            aria-controls="tableWithDynamicRows" data-dt-idx="2" tabindex="0"><i
-                                                class="feather icon-chevron-right fs-16"></i></a></li>
+                                    <li class="paginate_button active"><a href="#" aria-controls="tableWithDynamicRows" data-dt-idx="1" tabindex="0">1</a>
+                                    </li>
+                                    <li class="paginate_button next disabled" id="tableWithDynamicRows_next"><a href="#" aria-controls="tableWithDynamicRows" data-dt-idx="2" tabindex="0"><i class="feather icon-chevron-right fs-16"></i></a></li>
                                 </ul>
                             </div>
-                            <div class="dataTables_info" id="tableWithDynamicRows_info" role="status"
-                                aria-live="polite">Showing <b>1 to 5</b> of 5 entries</div>
+                            <div class="dataTables_info" id="tableWithDynamicRows_info" role="status" aria-live="polite">Showing <b>1 to 5</b> of 5 entries</div>
                         </div>
                     </div>
                 </div>
@@ -164,5 +143,3 @@
     </div>
 
 </div>
-
-<?php } ?>

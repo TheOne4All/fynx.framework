@@ -1,7 +1,4 @@
-<?php $this->extendTemplate('origin/resources/layouts/master'); ?>
-
-<?php function get_content()
-{ ?>
+<!-- [begin-extend-template]origin/resources/layouts/master[end] -->
 
 <!-- Main-body end -->
 
@@ -1114,7 +1111,8 @@
                                                                     </g>
                                                                     <g class="nv-axisMaxMin" transform="translate(0,0)">
                                                                         <text dy=".71em" y="7" transform="rotate(0 0,0)"
-                                                                            style="text-anchor: middle;">Sun</text></g>
+                                                                            style="text-anchor: middle;">Sun</text>
+                                                                    </g>
                                                                     <g class="nv-axisMaxMin"
                                                                         transform="translate(577,0)"><text dy=".71em"
                                                                             y="7" transform="rotate(0 0,0)"
@@ -1198,7 +1196,8 @@
                                                                             style="opacity: 1;"></text></g>
                                                                     <g class="nv-axisMaxMin" transform="translate(0,0)">
                                                                         <text dy=".32em" y="0" x="-3" text-anchor="end"
-                                                                            style="opacity: 1;"></text></g>
+                                                                            style="opacity: 1;"></text>
+                                                                    </g>
                                                                 </g>
                                                             </g>
                                                             <g class="nv-linesWrap">
@@ -4076,11 +4075,13 @@
                                                 <li class="mapplic-list-location mapplic-list-shown" data-location="af">
                                                     <a href="#">
                                                         <h4>Africa</h4><span></span>
-                                                    </a></li>
+                                                    </a>
+                                                </li>
                                                 <li class="mapplic-list-location mapplic-list-shown" data-location="ru">
                                                     <a href="#">
                                                         <h4>Russia</h4><span></span>
-                                                    </a></li>
+                                                    </a>
+                                                </li>
                                             </ol>
                                             <p class="mapplic-not-found">Nothing found. Please try a different search.
                                             </p>
@@ -4932,11 +4933,4 @@
 
 </div>
 
-
-
-
-
-
 <!-- Main-body end -->
-
-<?php } ?>

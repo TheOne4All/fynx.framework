@@ -1,0 +1,417 @@
+<?php
+
+class Helpers
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Get Client IP
+    |--------------------------------------------------------------------------
+    |
+    | This Helps the current IP address or Local and Remote users.
+    |
+	*/
+    public function get_client_IP()
+    {
+
+        // Get user IP address
+        if (isset($_SERVER['HTTP_CLIENT_IP']) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
+        }
+
+        $ip = filter_var($ip, FILTER_VALIDATE_IP);
+        $ip = ($ip === false) ? '0.0.0.0' : $ip;
+        return $ip;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check URL Existense
+    |--------------------------------------------------------------------------
+    |
+    | This Helps check if a URL exist or not
+    |
+	*/
+    public function url_exist($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($code == 200) {
+            $status = true;
+        } else {
+            $status = false;
+        }
+        curl_close($ch);
+        return $status;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Get Currency Coversion
+    |--------------------------------------------------------------------------
+    |
+    | This Helps convert currency at real-time from finance.yahoo.com
+    |
+	*/
+    public function get_currency_rate($from, $to, $conversion = 1)
+    {
+        //$from = 'USD'
+        //$to = 'INR';
+        $url = 'http://finance.yahoo.com/d/quotes.csv?e=.csv&f=sl1d1t1&s=' . $from . $to . '=X';
+        $handle = fopen($url, 'r');
+
+        if ($handle) {
+            $result = fgets($handle, 4096);
+            fclose($handle);
+        }
+
+        $allData = explode(',', $result);
+        $currencyValue = $allData[1];
+
+        return $currencyValue * $conversion;
+    }
+
+    public function generateXML($tag_in, $value_in = "", $attribute_in = "")
+    {
+        $return = "";
+        $attributes_out = "";
+        if (is_array($attribute_in)) {
+            if (count($attribute_in) != 0) {
+                foreach ($attribute_in as $k => $v) :
+                    $attributes_out .= " " . $k . "=\"" . $v . "\"";
+                endforeach;
+            }
+        }
+        return "<" . $tag_in . "" . $attributes_out . ((trim($value_in) == "") ? "/>" : ">" . $value_in . "</" . $tag_in . ">");
+    }
+
+    public function arrayToXML($array_in, $firstTag)
+    {
+        $return = "";
+        $attributes = array();
+        foreach ($array_in as $k => $v) :
+            if ($k[0] == "@") {
+                // attribute...
+                $attributes[str_replace("@", "", $k)] = $v;
+            } else {
+                if (is_array($v)) {
+                    $return .= $this->generateXML($k, $this->arrayToXML($v, $firstTag), $attributes);
+                    $attributes = array();
+                } else if (is_bool($v)) {
+                    $return .= $this->generateXML($k, (($v == true) ? "true" : "false"), $attributes);
+                    $attributes = array();
+                } else {
+                    $return .= $this->generateXML($k, $v, $attributes);
+                    $attributes = array();
+                }
+            }
+
+        endforeach;
+        $return = str_replace("0>", $firstTag . ">", $return);
+        return $return;
+    }
+
+
+
+    // Transform hours like "1:45" into the total number of minutes, "105".
+    public function hoursToMinutes($hours)
+    {
+        $minutes = 0;
+        if (strpos($hours, ':') !== false) {
+            // Split hours and minutes.
+            list($hours, $minutes) = explode(':', $hours);
+        }
+        return $hours * 60 + $minutes;
+    }
+
+    // Transform minutes like "105" into hours like "1:45".
+    public function minutesToHrsMins($minutes)
+    {
+        $hours = (int)($minutes / 60);
+        $minutes -= $hours * 60;
+        return sprintf("%d:%02.0f", $hours, $minutes);
+    }
+
+    // Transform minutes like "1" into seconds like "60".
+    public function minutesToSecs($minutes)
+    {
+        return ($minutes * 60);
+    }
+    // Transform seconds like "105" into hours like "1:45:22".
+    public function secondsToHrsMinsSecs($seconds)
+    {
+        return gmdate('H:i:s', $seconds);
+    }
+
+    // Transform minutes like "105" into hours like "1:45".
+    public function hrsMinsSecsToSeconds($str_time)
+    {
+        $str_time = preg_replace("/^([\d]{1,2})\:([\d]{2})$/", "00:$1:$2", $str_time);
+        sscanf($str_time, "%d:%d:%d", $hours, $minutes, $seconds);
+        return $hours * 3600 + $minutes * 60 + $seconds;
+    }
+    public function downloader($directory, $fileName)
+    {
+        // get the file request, throw error if nothing supplied
+
+        // hide notices
+        @ini_set('error_reporting', E_ALL & ~E_NOTICE);
+
+        //- turn off compression on the server
+        @apache_setenv('no-gzip', 1);
+        @ini_set('zlib.output_compression', 'Off');
+
+        if (!isset($fileName) || empty($fileName)) {
+            header("HTTP/1.0 400 Bad Request");
+            exit;
+        }
+
+        // sanitize the file request, keep just the name and extension
+        // also, replaces the file location with a preset one ('./myfiles/' in this example)
+        $file_path  = $fileName;
+        $path_parts = pathinfo($file_path);
+        $file_name  = $path_parts['basename'];
+        $file_ext   = $path_parts['extension'];
+        $file_path  = $directory . $file_name;
+
+        // allow a file to be streamed instead of sent as an attachment
+        $is_attachment = isset($_REQUEST['stream']) ? false : true;
+
+        // make sure the file exists
+        if (is_file($file_path)) {
+            $file_size  = filesize($file_path);
+
+            //fix for getting large files			
+            //$f = $this->fsobj->GetFile(realpath($file_path));
+            //$file_size = $f->Size;
+            //unset($this->fsobj);
+
+            $file = @fopen($file_path, "rb");
+            if ($file) {
+                // set the headers, prevent caching
+                header("Pragma: public");
+                header("Expires: -1");
+                header("Cache-Control: public, must-revalidate, post-check=0, pre-check=0");
+                header("Content-Disposition: attachment; filename=\"$file_name\"");
+
+                // set appropriate headers for attachment or streamed file
+                if ($is_attachment) {
+                    header("Content-Disposition: attachment; filename=\"$file_name\"");
+                } else {
+                    header('Content-Disposition: inline;');
+                    header('Content-Transfer-Encoding: binary');
+                }
+
+                // set the mime type based on extension, get a database of mime types.
+                $ctype_default = "application/octet-stream";
+                $content_types = array(
+                    "exe" => "application/octet-stream",
+                    "zip" => "application/zip",
+                    "mp3" => "audio/mpeg",
+                    "mpg" => "video/mpeg",
+                    "avi" => "video/x-msvideo",
+                );
+                $ctype = isset($content_types[$file_ext]) ? $content_types[$file_ext] : $ctype_default;
+                header("Content-Type: " . $ctype);
+
+                //check if http_range is sent by browser (or download manager)
+                if (isset($_SERVER['HTTP_RANGE'])) {
+                    list($size_unit, $range_orig) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+                    if ($size_unit == 'bytes') {
+                        //multiple ranges could be specified at the same time, but for simplicity only serve the first range
+                        //http://tools.ietf.org/id/draft-ietf-http-range-retrieval-00.txt
+                        list($range, $extra_ranges) = explode(',', $range_orig, 2);
+                    } else {
+                        $range = '';
+                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                        exit;
+                    }
+                } else {
+                    $range = '';
+                }
+
+                //figure out download piece from range (if set)
+                list($seek_start, $seek_end) = explode('-', $range, 2);
+
+                //set start and end based on range (if set), else set defaults
+                //also check for invalid ranges.
+                $seek_end   = (empty($seek_end)) ? ($file_size - 1) : min(abs(intval($seek_end)), ($file_size - 1));
+                $seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)), 0);
+
+                //Only send partial content header if downloading a piece of the file (IE workaround)
+                if ($seek_start > 0 || $seek_end < ($file_size - 1)) {
+                    header('HTTP/1.1 206 Partial Content');
+                    header('Content-Range: bytes ' . $seek_start . '-' . $seek_end . '/' . $file_size);
+                    header('Content-Length: ' . ($seek_end - $seek_start + 1));
+                } else
+                    header("Content-Length: $file_size");
+
+                header('Accept-Ranges: bytes');
+
+                set_time_limit(0);
+                fseek($file, $seek_start);
+
+                while (!feof($file)) {
+                    echo @fread($file, 1024 * 8);
+                    ob_flush();
+                    flush();
+                    if (connection_status() != 0) {
+                        @fclose($file);
+                        exit;
+                    }
+                }
+
+                // file save was a success
+                @fclose($file);
+                exit;
+            } else {
+                // file couldn't be opened
+                header("HTTP/1.0 500 Internal Server Error");
+                exit;
+            }
+        } else {
+            // file does not exist
+            header("HTTP/1.0 404 Not Found");
+            exit;
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Download File
+    |--------------------------------------------------------------------------
+    |
+    | This Helps download any File type.
+    |
+	*/
+    public function download_file($vFilePath, $vDownloadName = "")
+    {
+        $vFilename        = basename($vFilePath);
+        $vNewFilename    = $vDownloadName == "" ? $vFilename : $vDownloadName;
+        $vFileType         = $this->getFileType($vFilename);
+        $vContentType    = $this->getContentType($vFileType);
+
+        // Fix IE bug [0]
+        $header_file = (strstr($_SERVER['HTTP_USER_AGENT'], 'MSIE')) ? preg_replace('/\./', '%2e', $vNewFilename, substr_count($vNewFilename, '.') - 1) : $vNewFilename;
+
+        // Prepare headers
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: public", false);
+        header("Content-Description: File Transfer");
+        header("Content-Type: " . $vContentType);
+        header("Accept-Ranges: bytes");
+        header("Content-Disposition: attachment; filename=\"" . $header_file . "\";");
+        header("Content-Transfer-Encoding: binary");
+        header("Content-Length: " . filesize($vFilePath));
+
+        set_time_limit(0);
+
+        // download mittels readfile funktioniert nicht bei grossen dateien
+
+        /* datei paeckchenweise lesen und in den buffer schreiben */
+        $vBlockSize = 1048576; //1024;
+        $vDownlSpeed = 10;
+
+        $dlfile = fopen($vFilePath, 'r');
+        while (!feof($dlfile) && connection_status() == 0) {
+            //reset time limit for big files
+            set_time_limit(0);
+            print fread($dlfile, $vBlockSize * $vDownlSpeed);
+            flush();
+        }
+        fclose($dlfile);
+        exit();
+    }
+
+    function getFileType($vFilename)
+    {
+        return strtolower(substr(strrchr($vFilename, "."), 1));
+    }
+
+    function getBrowserId()
+    {
+        $browser = $_SERVER['HTTP_USER_AGENT'];
+
+        if (preg_match('Opera(/| )([0-9].[0-9]{1,2})', $browser)) {
+            return 'OPERA';
+        } else if (preg_match('MSIE ([0-9].[0-9]{1,2})', $browser)) {
+            return 'IE';
+        } else if (preg_match('OmniWeb/([0-9].[0-9]{1,2})', $browser)) {
+            return 'OMNIWEB';
+        } else if (preg_match('(Konqueror/)(.*)', $browser)) {
+            return 'KONQUEROR';
+        } else if (preg_match('Mozilla/([0-9].[0-9]{1,2})', $browser)) {
+            return 'MOZILLA';
+        } else {
+            return 'OTHER';
+        }
+    }
+
+    function getContentType($FileType = "")
+    {
+        $vBrowser = $this->getBrowserId();
+        switch ($FileType) {
+            case "exe":
+                (($vBrowser == 'IE' || $vBrowser == 'OPERA') ? ($ctype = "application/octetstream") : ($ctype = "application/octet-stream"));
+                break;
+            case "pdf":
+                $ctype = "application/pdf";
+                break;
+            case "zip":
+                $ctype = "application/zip";
+                break;
+            case "doc":
+                $ctype = "application/msword";
+                break;
+            case "xls":
+                $ctype = "application/vnd.ms-excel";
+                break;
+            case "ppt":
+                $ctype = "application/vnd.ms-powerpoint";
+                break;
+            case "gif":
+                $ctype = "image/gif";
+                break;
+            case "png":
+                $ctype = "image/png";
+                break;
+            case "wmv":
+                $ctype = "video/x-ms-wmv";
+                break;
+            case "jpe":
+            case "jpeg":
+            case "jpg":
+                $ctype = "image/jpg";
+                break;
+            case "exe":
+                $ctype =  "application/octet-stream";
+                break;
+            case "zip":
+                $ctype = "application/zip";
+                break;
+            case "mp3":
+                $ctype =  "audio/mpeg";
+                break;
+            case "mpg":
+                $ctype = "video/mpeg";
+                break;
+            case "avi":
+                $ctype = "video/x-msvideo";
+                break;
+            default:
+                $ctype = "application/force-download";
+                break;
+        }
+
+        return $ctype;
+    }
+}

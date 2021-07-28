@@ -1,0 +1,325 @@
+<?php
+
+//require_once 'pagination.lib';
+
+class Template
+{
+    /**
+     *
+     * Path to Master Page
+     *
+     * @access protected
+     * @var string
+     *
+     **/
+    protected $master_path;
+
+    /**
+     *
+     * Path to Module/Selected Page
+     *
+     * @access protected
+     * @var string
+     *
+     **/
+    protected $file_path;
+
+    /**
+     *
+     * Array Object Passed to Page/URL
+     *
+     * @access protected
+     * @var array
+     *
+     **/
+    protected $data;
+
+    /**
+     *
+     * Final Template Result to be Rendered
+     *
+     * @access protected
+     * @var object
+     *
+     **/
+    protected $output = NULL;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Class constructor
+    |--------------------------------------------------------------------------
+    |
+    | Class constructor initialization to set the Variables
+    |
+    */
+    public function __construct($file_path = NULL, $data = NULL)
+    {
+        $this->file_path = $file_path;
+        $this->data = $data;
+        $this->master_path = NULL;
+        //$this->pagination = new Pagination();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Get Content In-Between
+    |--------------------------------------------------------------------------
+    |
+    | This will get the content in-between a delimeter.
+    |
+    */
+    protected function get_content_between($start, $end, $string)
+    {
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Display Alert/Notification Messages
+    |--------------------------------------------------------------------------
+    |
+	| This helps display Alert/Notification Messages after an Action is
+	| performed. It is used after a Redirect Method.
+    |
+    */
+    public function alert($request = NULL)
+    {
+        if (!is_null($request)) :
+            foreach ($request as $key => $value) {
+                if ($key == 'success' || $key == 'warning' || $key == 'danger' || $key == 'info') :
+                    $alert = 'bg-' . $key;
+                    echo '<div class="alert-display ' . $alert . '">' . $value . '</div>';
+                endif;
+            }
+        else :
+            return FALSE;
+        endif;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Extend Master Template Layout
+    |--------------------------------------------------------------------------
+    |
+    | This function extends the Master Template Layout to 
+    | other Template Layouts that would require it's features.
+    |
+    */
+    public function extend_template( $master_path = NULL, $_content = NULL, $data = NULL )
+    {
+        $this->data = $data;
+        $this->master_content = $_content;
+        if ( !is_null( $this->data ) ) {
+            foreach ( $this->data as $key => $value ) {
+                ${ $key } = $value;
+            }
+        }
+        if ( file_exists( FYNX_PUBLIC['template'] . strtolower( $master_path ) . '.tpl' ) ) {
+            require_once FYNX_PUBLIC['template'] . strtolower( $master_path ) . '.tpl';
+        } else {
+            require_once $this->master_content;
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render Template Layout
+    |--------------------------------------------------------------------------
+    |
+    | This function renders or displays the selected Template Layout to 
+    | the user.
+    |
+    */
+    public function output()
+    {
+        $this->file_path_content = file_get_contents($this->file_path);
+        if (strpos($this->file_path_content, '[begin-extend-template]') !== FALSE) {
+            $this->master_path = $this->get_content_between('[begin-extend-template]', '[end]', $this->file_path_content);
+        }
+        $this->extend_template($this->master_path, $this->file_path, $this->data);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create Modal Layout
+    |--------------------------------------------------------------------------
+    |
+    | These set of function helps create FYNX Modal Layout of different 
+    | types; Slide-Up, Stick-Up, Slide-Right and Fill-In.
+    |
+    */
+    public function modal($para = NULL, $key = NULL)
+    {
+        if (!isset($para['title'])) : $para['title'] = NULL;
+        endif;
+        if (!isset($para['subtitle'])) : $para['subtitle'] = NULL;
+        endif;
+        if (!isset($para['classlist'])) : $para['classlist'] = NULL;
+        endif;
+        if (!isset($para['file'])) : $para['file'] = NULL;
+        endif;
+        if (!isset($para['size'])) : $para['size'] = 'md';
+        endif;
+        if (!isset($para['url'])) : $para['url'] = NULL;
+        endif;
+        if (!isset($para['submit'])) : $para['submit'] = 'Submit';
+        endif;
+        if (!isset($para['cancel'])) : $para['cancel'] = NULL;
+        endif;
+        if (!isset($para['name'])) : die("<h5>Modal has no 'Name' Parameter!</h5>");
+        else :
+            if (!is_null($key)) :
+                $this->name_key = $para['name'] . $key;
+                $this->key = $key;
+            else :
+                $this->name_key = $para['name'];
+            endif;
+        endif;
+        $this->title = $para['title'];
+        $this->subtitle = $para['subtitle'];
+        $this->file = $para['file'];
+        $this->url = $para['url'];
+        $this->submit = $para['submit'];
+        $this->cancel = $para['cancel'];
+        $this->size = $para['size'];
+        $this->classlist = $para['classlist'];
+        $this->input = NULL;
+        $this->data = array();
+        return $this;
+    }
+
+    public function modal_field($field = NULL, $value = NULL)
+    {
+        if (!is_null($field) && !is_array($value) && !is_object($value)) :
+            $this->input = $this->input . "<input type='hidden' name='" . $field . "' value='" . $value . "'>";
+        elseif ( ( !is_null($field) && is_array($value) ) || ( !is_null($field) && is_object($value) ) ) :
+            $this->data[$field] = $value;
+        else :
+            $this->input = NULL;
+        endif;
+        return $this;
+    }
+
+    public function modal_body($data = NULL, $content = NULL)
+    {
+        $this->classlistArray = explode(' ', $this->classlist);
+        switch ($this->classlistArray) {
+            case in_array('fill-in', $this->classlistArray):
+                echo '    
+                <section class="modal ' . $this->classlist . '" id="' . $this->name_key . '" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="feather icon-x fs-16"></i>
+                    </button>';
+                if (!is_null($this->title)) :
+                    echo '<div class="modal-dialog ">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="text-left p-b-5">' . $this->title . '</h5>
+                    </div>
+                    <div class="modal-body">';
+                endif;
+                break;
+
+            case in_array('slide-right', $this->classlistArray):
+                echo '    
+                <section class="modal ' . $this->classlist . '" id="' . $this->name_key . '" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                <div class="modal-content-wrapper">
+                <div class="modal-content bg-master-lightest">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    <i class="feather icon-x fs-16"></i>
+                    </button>
+                <div class="container-xs-height full-height">
+                <div class="row-xs-height">
+                <div class="modal-body col-xs-height col-middle text-center">';
+                break;
+
+            default:
+                echo '
+                <section class="modal ' . $this->classlist . '" id="' . $this->name_key . '" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-' . $this->size . '">
+                <div class="modal-content-wrapper">
+                <div class="modal-content bg-master-lightest">
+                <div class="modal-header clearfix text-left">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="feather icon-x fs-16"></i>
+                    </button>';
+                if (!is_null($this->title)) :
+                    if (!is_null($this->subtitle)) : $no_margin = 'no-margin';
+                    else : $no_margin = '';
+                    endif;
+                    echo '<h5 class="' . $no_margin . '">' . $this->title . '</h5>';
+                endif;
+                if (!is_null($this->subtitle)) :
+                    echo '<p class="p-b-5">' . $this->subtitle . '</p>';
+                endif;
+                echo '</div><div class="modal-body">';
+                break;
+        }
+        if (is_array($data) && !empty(is_string($content))) :
+            extract($data);
+            echo '<p class="no-margin p-b-5">' . $content . '</p>';
+        endif;
+        if (!empty(is_string($data))  && is_null($content)) :
+            echo '<p class="no-margin p-b-5">' . $data . '</p>';
+        endif;
+        if (is_array($data) && is_null($content)) :
+            extract($data);
+        endif;
+        if (!is_null($this->url)) :
+            echo '<form method="POST" enctype="multipart/form-data" action="' . $this->url . '">';
+        endif;
+        if (!is_null($this->input)) :
+            echo $this->input;
+        endif;
+        if (!is_null($this->data)) :
+            extract($this->data);
+        endif;
+        if (!is_null($this->file)) :
+            include FYNX_PUBLIC['template'] . $this->file;
+        endif;
+        return $this;
+    }
+
+    public function modal_end($content = NULL)
+    {
+
+        switch ($this->classlistArray) {
+            case in_array('fill-in', $this->classlistArray):
+                if (!is_null($this->url)) :
+                    echo '</form>';
+                endif;
+                if (!is_null($this->title)) :
+                    echo "</div><div class='modal-footer'>" . $content . "</div></div></div>";
+                endif;
+                echo "</section>";
+                break;
+
+            case in_array('slide-right', $this->classlistArray):
+                if (!is_null($this->url)) :
+                    echo '<button class="btn btn-cons btn-block" type="submit">' . $this->submit . '</button></form>';
+                    if (!is_null($this->cancel)) :
+                        echo '<button class="btn btn-block cancel btn-danger">' . $this->cancel . '</button>';
+                    endif;
+                endif;
+                echo "</div></div></div></div></div></div></section>";
+                break;
+
+            default:
+                if (!is_null($this->url)) :
+                    echo '<div style="display:flex; justify-content:flex-end;">';
+                    if (!is_null($this->cancel)) :
+                        echo '<button class="btn m-t-10 m-r-10 cancel btn-danger" type="button">' . $this->cancel . '</button>';
+                    endif;
+                    echo '<button class="btn btn-cons m-t-10" type="submit">' . $this->submit . '</button></div></form>';
+                endif;
+                echo "</div></div></div></div></section>";
+                break;
+        }
+    }
+}

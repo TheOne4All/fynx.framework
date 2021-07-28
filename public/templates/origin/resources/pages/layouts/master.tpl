@@ -1,8 +1,10 @@
+<?php global $autoLoader; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title><?= APP_NAME ?></title>
+    <title><?= FYNX_APP['name'] ?></title>
 
     <!-- Meta -->
     <meta charset="utf-8">
@@ -13,18 +15,23 @@
     <meta name="Jencube" content="#">
 
     <!-- Favicon icon -->
-    <link rel="icon" href="<?= LINK ?>media/favicon.png" type="image/x-icon">
+    <link rel="icon" href="<?= FYNX_APP['favicon'] ?>" type="image/x-icon">
+
     <!-- Load StyleSheets Library -->
-    <link rel="stylesheet" type="text/css" href="<?= LINK ?>stylesheets/libraries/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="<?= LINK ?>stylesheets/libraries/bootstrap.css.map">
+    <?php $autoLoader->load_html_files( FYNX_PUBLIC['stylesheet_lib'] ); ?>
+
     <!-- Inbuilt font-->
-    <link rel="stylesheet" type="text/css" href="<?= LINK ?>templates/origin/css/raleway.css">
+    <!-- Raleway icon -->
+    <?php $autoLoader->load_html_files( FYNX_PUBLIC['default_temp_origin_css_url'] . 'raleway.css' ); ?>
+
     <!-- Feather icon -->
-    <link rel="stylesheet" type="text/css" href="<?= LINK ?>templates/origin/css/feather.css">
-    <!-- Load Plugins StyleSheets -->
-    <link rel="stylesheet" type="text/css" href="<?= LINK ?>templates/origin/css/pace-theme-flash.css">
+    <?php $autoLoader->load_html_files( FYNX_PUBLIC['default_temp_origin_css_url'] . 'feather.css' ); ?>
+
+    <!-- Load Plugins StyleSheets icon -->
+    <?php $autoLoader->load_html_files( FYNX_PUBLIC['default_temp_origin_css_url'] . 'pace-theme-flash.css' ); ?>
+
     <!-- Load Custom StyleSheets -->
-    <link rel="stylesheet" type="text/css" href="<?= LINK ?>templates/origin/css/style.css">
+    <?php $autoLoader->load_html_files( FYNX_PUBLIC['default_temp_origin_css_url'] . 'style.css' ); ?>
 
 </head>
 
@@ -33,9 +40,11 @@
     <!-- Customize theme default settings -->
     <?php require_once 'customizetheme.tpl'; ?>
 
+    <!-- Alert Display Notification -->
+    <?php $this->alert($_GET); ?>
+
     <!-- Get Content -->
-    <?php if (function_exists('get_content')) : get_content();
-    endif ?>
+    <?php require_once $this->master_content; ?>
 
     <!-- Footer Layout -->
     <?php require_once 'footer.tpl'; ?>

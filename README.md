@@ -1,2 +1,2 @@
-# fynix.framework
- FYNIX Framework is developed by Jencube using simple computing architecture they coined (S.L.O - Storage Logic Output) .
+# fynx.framework
+ FYNX Framework is developed by Jencube using simple computing architecture they coined (S.L.O - Storage Logic Output) .

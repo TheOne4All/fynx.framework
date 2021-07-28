@@ -5,37 +5,38 @@
     <div class="sidebar-overlay-slide from-top p-l-20" id="appMenu">
         <div class="row">
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= MEDIA ?>browser/chrome.png" alt="Chrome" width="40px"><span
-                        class="fs-11">Chrome</span></a>
+                <a href="#" class=""><img src="<?= FYNX_PUBLIC['url'] ?>media/browser/chrome.png" alt="Chrome"
+                        width="40px"><span class="fs-11">Chrome</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= MEDIA ?>browser/ie.png" alt="IE" width="40px"><span
-                        class="fs-11">IE</span></a>
+                <a href="#" class=""><img src="<?= FYNX_PUBLIC['url'] ?>media/browser/ie.png" alt="IE"
+                        width="40px"><span class="fs-11">IE</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= MEDIA ?>browser/firefox.png" alt="Firefox" width="40px"><span
-                        class="fs-11">FireFox</span></a>
+                <a href="#" class=""><img src="<?= FYNX_PUBLIC['url'] ?>media/browser/firefox.png" alt="Firefox"
+                        width="40px"><span class="fs-11">FireFox</span></a>
             </div>
         </div>
         <div class="row m-t-20">
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= MEDIA ?>browser/safari.png" alt="Safari" width="40px"><span
-                        class="fs-11">Safari</span></a>
+                <a href="#" class=""><img src="<?= FYNX_PUBLIC['url'] ?>media/browser/safari.png" alt="Safari"
+                        width="40px"><span class="fs-11">Safari</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class=""><img src="<?= MEDIA ?>browser/opera.png" alt="Opera" width="40px"><span
-                        class="fs-11">Opera</span></a>
+                <a href="#" class=""><img src="<?= FYNX_PUBLIC['url'] ?>media/browser/opera.png" alt="Opera"
+                        width="40px"><span class="fs-11">Opera</span></a>
             </div>
             <div class="col-sm-4 no-padding">
-                <a href="#" class="" style="color:brown;"><img src="<?= LINK ?>templates/origin/img/svgs/add_more.svg"
-                        alt="More" width="40px"></a>
+                <a href="#" class="" style="color:brown;"><img
+                        src="<?= FYNX_PUBLIC['url'] ?>templates/origin/img/svgs/add_more.svg" alt="More"
+                        width="40px"></a>
             </div>
         </div>
     </div>
 
     <div class="sidebar-header">
-        <img src="<?= MEDIA ?>logo.png" alt="logo" class="brand" data-src="<?= MEDIA ?>logo.png"
-            data-src-retina="<?= MEDIA ?>logo.png" width="auto" height="30">
+        <img src="<?= FYNX_LOGO['white'] ?>" alt="logo" class="brand" data-src="<?= FYNX_LOGO['white'] ?>"
+            data-src-retina="<?= FYNX_LOGO['white'] ?>" width="auto" height="30">
         <div class="sidebar-header-controls float-right m-r-20">
             <a class="btn btn-xs sidebar-slide-toggle btn-link m-l-10" data-pages-toggle="appMenu"><i
                     class="feather icon-chevron-up fs-16"></i></a>
@@ -49,14 +50,13 @@
             <ul class="p-t-20 p-b-20 menu-items scroll-content scroll-scrolly_visible"
                 style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 694.4px;">
                 <li class="">
-                    <a href="<?= LINK ?>dashboard/index" class="">
+                    <a href="<?= FYNX_PUBLIC['url'] ?>dashboard/index" class="">
                         <span class="title">Dashboard</span>
-                        <!-- <span class="details">12 New Updates</span> -->
                     </a>
                     <span class="icon-thumbnail sm-m-l-15 md-m-l-15"><i class="feather icon-home"></i></span>
                 </li>
                 <li class="">
-                    <a href="<?= LINK ?>students/index" class="">
+                    <a href="<?= FYNX_PUBLIC['url'] ?>students/index" class="">
                         <span class="title">Student</span>
                         <!-- <span class="details">234 New Emails</span> -->
                     </a>
@@ -77,7 +77,7 @@
                     <!-- Toggle between BLOCK display subMenu -->
                     <ul class="sub-menu">
                         <li class="">
-                            <a href="<?= LINK ?>hr/index">Staff</a>
+                            <a href="<?= FYNX_PUBLIC['url'] ?>hr/index">Staff</a>
                             <span class="icon-thumbnail sm-m-r-15">S</span>
                         </li>
                         <li class="">
@@ -87,7 +87,10 @@
                     </ul>
                 </li>
                 <li class="">
-                    <a href="#"><span class="title">Communications</span></a>
+                    <a href="#">
+                        <span class="title">Communications</span>
+                        <span class="details">12 New Updates</span>
+                    </a>
                     <span class="icon-thumbnail sm-m-l-15 md-m-l-15"><i class="feather icon-message-circle"></i></span>
                 </li>
                 <li>
@@ -116,8 +119,9 @@
                     </ul>
                 </li>
                 <li class="">
-                    <a href="<?= LINK ?>addons/index" class="">
+                    <a href="<?= FYNX_PUBLIC['url'] ?>addons/index" class="">
                         <span class="title">Add-ons</span>
+                        <span class="details">4 Apps Installed</span>
                     </a>
                     <span class="icon-thumbnail sm-m-l-15 md-m-l-15"><i class="feather icon-shopping-bag"></i></span>
                 </li>

@@ -1,20 +1,23 @@
 <?php
+/*
+|--------------------------------------------------------------------------
+| PUBLIC Base Loader
+|--------------------------------------------------------------------------
+|
+| require the initialize.ini file to load core Libraries via Autoloader
+| object
+|
+*/
 
-    require_once '../system/configs/app.cfg';
+// require APP config file
+require_once '../system/configs/app.cfg';
+$database = $autoLoader->instantiateClass['fynxDatabase'];
 
-    $database = $autoLoader->instantiateClass['fynxDatabase'];
+// require/Load autoloader object
+require_once FYNX_DIR . 'system/autoloader.php';
 
-    // Change the autoloader config
-    $autoLoader->set_autoload_config( FYNX_PUBLIC['config'] . 'autoload.cfg' );
+// Change the autoloader config
+// $autoLoader->set_autoload_config(FYNX_PUBLIC['config'] . 'autoload.cfg');
 
-    // echo FYNX_PUBLIC['config'] . 'autoload.cfg';
-
-    // var_dump(FYNX_PUBLIC['config'] . 'autoload.cfg');
-
-    // $loadFiles = [
-    //     FYNX_SYSTEM['core'] . 'processor.lib',
-    //     FYNX_SYSTEM['system'] . 'router.php'
-    // ];
-    // var_dump(FYNX_SYxSCONFIG);
-
-    $autoLoader->load_files( FYNX_PUBLIC['system'] );
+// load all default files and dependancies
+$autoLoader->load_files(FYNX_PUBLIC['core']);

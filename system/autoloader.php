@@ -295,7 +295,7 @@ class Autoloader
 		if (!empty($directories))
 			$this->_directories = $directories;
 
-		// $this->_set_unload_files();
+		$this->_set_unload_files();
 
 		if (!is_array($this->_directories)) {
 

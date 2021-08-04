@@ -2,6 +2,9 @@
 
 <!-- Modal Window Layout -->
 <?php
+
+$pagination = $autoLoader->instantiateClass['fynxPagination'];
+
 $viewStudent = [
     'name' => 'viewStudent',
     'title' => 'Student Record',
@@ -22,7 +25,7 @@ $this->modal($addStudent)->modal_body()->modal_end();
 $editStudent = [
     'name' => 'editStudent',
     'title' => 'Edit Student',
-    'subtitle' => 'Update a Single Staff Record',
+    'subtitle' => 'Update a Single Student Record',
     'file' => 'origin/resources/students/form.tpl',
     'url' => FYNX_PUBLIC['url'] . 'students/update',
     'size' => 'xl',
@@ -36,6 +39,25 @@ $deleteStudent = [
     'classlist' => 'stick-up',
     'size' => 'sm',
 ];
+
+$settings = [
+    'total_results' => $allStudents, // Total Record found via query
+    'list_per_page' => 2, // Number of record to display per page. Default is 25
+    //'current_page' => isset($_GET['page']),
+    'type' => 'list_link', // eg link, input, load_more, list_link, input_limit, list
+    'page_url' => FYNX_PUBLIC['url'] . 'students/index/', // Optional: URL link, default is # if not provided
+    'prev_btn' => '<i class="feather icon-chevron-left fs-16"></i>', // Optional: To Change the previous button text. Default is "Previous"
+    'next_btn' => '<i class="feather icon-chevron-right fs-16"></i>', // Optional: To Change the next button text. Default is "Next"
+    'first_btn' => '', // Optional: To Change the first button text. Default is "First"
+    'last_btn' => '', // Optional: To Change the last button text. Default is "Last"
+    'load_more' => '', // Optional: To Change the Load More button text. Default text is "Load More" like twitter back in the days
+    'done_loading' => '', // Optional: To Change the Done Loading button text, this is when all query record is display and there isn't any record, it is works with Load More Button. Default text is "Done Loading"
+    'input_text' => '', // Optional: To Change the Page title text. Default is "Page:"
+];
+
+$pagination->load($settings);
+$pageRecords = $pagination->get_page_records();
+
 ?>
 
 <div class="content">
@@ -71,7 +93,8 @@ $deleteStudent = [
                 </div>
                 <div class="pull-right">
                     <div class="col-xs-6">
-                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStudent"><i class="feather icon-plus"></i> Add Student
+                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStudent"><i
+                                class="feather icon-plus"></i> Add Student
                         </button>
                     </div>
                 </div>
@@ -80,7 +103,8 @@ $deleteStudent = [
             <div class="card-body">
                 <div id="tableWithDynamicRows_wrapper" class="dataTables_wrapper no-footer">
                     <div>
-                        <table class="table table-striped table-responsive-block dataTable no-footer" id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
+                        <table class="table table-striped table-responsive-block dataTable no-footer"
+                            id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
                             <thead>
                                 <tr role="row">
                                     <th class="sorting_asc">FullName</th>
@@ -92,32 +116,37 @@ $deleteStudent = [
                             </thead>
                             <tbody>
                                 <?php
-                                foreach ($allStudents as $key => $value) { ?>
-                                    <tr role="row">
-                                        <td class="v-align-middle sorting_1 cursor" data-toggle="modal" data-target="#viewStudent<?= $key ?>">
-                                            <p><?php echo $value['lastname'] . ", " . $value['firstname'] . " " . $value['middlename']; ?>
-                                            </p>
-                                        </td>
-                                        <td class="v-align-middle">
-                                            <p><?php echo $value['email']; ?></p>
-                                        </td>
-                                        <td class="v-align-middle">
-                                            <p><?php echo $value['mobileno']; ?></p>
-                                        </td>
-                                        <td class="v-align-middle">
-                                            <p><?php echo $value['created_at']; ?></p>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-group" title="Edit" data-toggle="modal" data-target="#editStudent<?= $key ?>"><i class="feather icon-edit"></i></button>
-                                                <button type="button" class="btn btn-group" data-toggle="modal" data-target="#deleteStudent<?= $key ?>" title="Delete"><i class="feather icon-trash-2"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                foreach ($pageRecords as $key => $pageRecord) { ?>
+                                <tr role="row">
+                                    <td class="v-align-middle sorting_1 cursor" data-toggle="modal"
+                                        data-target="#viewStudent<?= $key ?>">
+                                        <p><?php echo $pageRecord['lastname'] . ", " . $pageRecord['firstname'] . " " . $pageRecord['middlename']; ?>
+                                        </p>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <p><?php echo $pageRecord['email']; ?></p>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <p><?php echo $pageRecord['mobileno']; ?></p>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <p><?php echo $pageRecord['created_at']; ?></p>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-group" title="Edit" data-toggle="modal"
+                                                data-target="#editStudent<?= $key ?>"><i
+                                                    class="feather icon-edit"></i></button>
+                                            <button type="button" class="btn btn-group" data-toggle="modal"
+                                                data-target="#deleteStudent<?= $key ?>" title="Delete"><i
+                                                    class="feather icon-trash-2"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <?php
                                     $this->modal($viewStudent, $key)->modal_body($allStudents[$key])->modal_end();
                                     $this->modal($editStudent, $key)->modal_body($allStudents[$key])->modal_end();
-                                    $this->modal($deleteStudent, $key)->modal_field('id', $value['id'])->modal_body('Are you sure you want to proceed?')->modal_end();
+                                    $this->modal($deleteStudent, $key)->modal_field('id', $pageRecord['id'])->modal_body('Are you sure you want to proceed?')->modal_end();
                                 }
                                 ?>
                             </tbody>
@@ -127,14 +156,10 @@ $deleteStudent = [
                         <div>
                             <div class="dataTables_paginate paging_simple_numbers" id="tableWithDynamicRows_paginate">
                                 <ul class="">
-                                    <li class="paginate_button previous disabled" id="tableWithDynamicRows_previous"><a href="#" aria-controls="tableWithDynamicRows" data-dt-idx="0" tabindex="0"><i class="feather icon-chevron-left fs-16"></i></a>
-                                    </li>
-                                    <li class="paginate_button active"><a href="#" aria-controls="tableWithDynamicRows" data-dt-idx="1" tabindex="0">1</a>
-                                    </li>
-                                    <li class="paginate_button next disabled" id="tableWithDynamicRows_next"><a href="#" aria-controls="tableWithDynamicRows" data-dt-idx="2" tabindex="0"><i class="feather icon-chevron-right fs-16"></i></a></li>
+                                    <?= $pagination->display_paging() ?>
                                 </ul>
                             </div>
-                            <div class="dataTables_info" id="tableWithDynamicRows_info" role="status" aria-live="polite">Showing <b>1 to 5</b> of 5 entries</div>
+                            <?= $pagination->display_stats() ?>
                         </div>
                     </div>
                 </div>

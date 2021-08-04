@@ -13,8 +13,8 @@
                 <div class="col-sm-4">
                     <div class="form-group form-group-default required">
                         <label>Admission Number</label>
-                        <input type="text" class="form-control" placeholder="Admission Number" id="admission_no"
-                            name="admission_no" value="<?php if (isset($admission_no)) echo $admission_no; ?>" required
+                        <input type="text" class="form-control" placeholder="Admission Number" name="admission_no"
+                            value="<?php if (isset($admission_no)) echo $admission_no; ?>" required
                             aria-required="true">
                     </div>
                 </div>
@@ -53,20 +53,20 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group form-group-default required"><label>Last Name</label>
-                        <input type="text" class="form-control" placeholder="Last Name" id="lastname" name="lastname"
+                        <input type="text" class="form-control" placeholder="Last Name" name="lastname"
                             value="<?php if (isset($lastname)) echo $lastname; ?>" required aria-required="true">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group form-group-default required"><label>First Name</label>
-                        <input type="text" class="form-control" placeholder="First Name" id="firstname" name="firstname"
+                        <input type="text" class="form-control" placeholder="First Name" name="firstname"
                             value="<?php if (isset($firstname)) echo $firstname; ?>" required aria-required="true">
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group form-group-default"><label>Middle Name</label>
-                        <input type="text" class="form-control" placeholder="Middle Name" id="middlename"
-                            name="middlename" value="<?php if (isset($middlename)) echo $middlename; ?>">
+                        <input type="text" class="form-control" placeholder="Middle Name" name="middlename"
+                            value="<?php if (isset($middlename)) echo $middlename; ?>">
                     </div>
                 </div>
             </div>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group form-group-default"><label>Religion</label>
-                        <input type="text" class="form-control" placeholder="Religion" id="religion" name="religion"
+                        <input type="text" class="form-control" placeholder="Religion" name="religion"
                             value="<?php if (isset($religion)) echo $religion; ?>">
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                         </div>
                         <div class="form-input-group">
                             <label>Date of Birth</label>
-                            <input type="text" class="form-control" placeholder="yyyy-mm-dd" id="dob" name="dob"
+                            <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="dob"
                                 value="<?php if (isset($dob)) echo $dob; ?>" required aria-required="true">
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                         </div>
                         <div class="form-input-group">
                             <label>Email</label>
-                            <input type="email" class="form-control" placeholder="Email" id="email" name="email"
+                            <input type="email" class="form-control" placeholder="Email" name="email"
                                 value="<?php if (isset($email)) echo $email; ?>" required aria-required="true">
                         </div>
                     </div>
@@ -136,9 +136,8 @@
                         </div>
                         <div class="form-input-group">
                             <label>Phone</label>
-                            <input type="text" class="form-control" id="mobileno" name="mobileno"
-                                placeholder="(CODE)-NUMBER" value="<?php if (isset($mobileno)) echo $mobileno; ?>"
-                                required aria-required="true">
+                            <input type="text" class="form-control" name="mobileno" placeholder="(CODE)-NUMBER"
+                                value="<?php if (isset($mobileno)) echo $mobileno; ?>" required aria-required="true">
                         </div>
                     </div>
                 </div>
@@ -153,16 +152,16 @@
                         </div>
                         <div class="form-input-group">
                             <label>Admission Date</label>
-                            <input type="text" class="form-control" placeholder="yyyy-mm-dd" id="admission_date"
-                                name="admission_date" value="<?php if (isset($admission_date)) echo $admission_date; ?>"
-                                required aria-required="true">
+                            <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="admission_date"
+                                value="<?php if (isset($admission_date)) echo $admission_date; ?>" required
+                                aria-required="true">
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group form-group-default form-group-default-select2">
                         <label>Blood Group</label>
-                        <select id="blood_group" name="blood_group" class="full-width select2-hidden-accessible"
+                        <select name="blood_group" class="full-width select2-hidden-accessible"
                             data-placeholder="Select Section" data-init-plugin="select2" tabindex="-1"
                             aria-hidden="true">
                             <option value="">Select</option>
@@ -181,7 +180,7 @@
                 <div class="col-sm-4">
                     <div class="form-group form-group-default form-group-default-select2">
                         <label>Any Sibling Here?</label>
-                        <select id="sibling_id" name="sibling_id" class="full-width select2-hidden-accessible"
+                        <select name="sibling_id" class="full-width select2-hidden-accessible"
                             data-placeholder="Select Section" data-init-plugin="select2" tabindex="-1"
                             aria-hidden="true">
                             <option value="1">None</option>
@@ -196,7 +195,7 @@
                         <label for="image">Photo</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="images" name="images">
+                                <input type="file" class="custom-file-input" name="images">
                                 <label class="custom-file-label" for="image">Choose file</label>
                             </div>
                         </div>
@@ -225,8 +224,8 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group form-group-default required"><label>Father's Name</label>
-                        <input type="text" class="form-control" placeholder="Father's Name" id="father_name"
-                            name="father_name" value="<?php if (isset($father_name)) echo $father_name; ?>">
+                        <input type="text" class="form-control" placeholder="Father's Name" name="father_name"
+                            value="<?php if (isset($father_name)) echo $father_name; ?>">
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -244,7 +243,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group form-group-default"><label>Father's Occupation</label>
-                        <input type="text" class="form-control" placeholder="Father's Occupation" id="father_occupation"
+                        <input type="text" class="form-control" placeholder="Father's Occupation"
                             name="father_occupation"
                             value="<?php if (isset($father_occupation)) echo $father_occupation; ?>">
                     </div>
@@ -253,8 +252,8 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-group form-group-default"><label>Mother's Name</label>
-                        <input type="text" class="form-control" placeholder="Mother's Name" id="mother_name"
-                            name="mother_name" value="<?php if (isset($mother_name)) echo $mother_name; ?>">
+                        <input type="text" class="form-control" placeholder="Mother's Name" name="mother_name"
+                            value="<?php if (isset($mother_name)) echo $mother_name; ?>">
                     </div>
                 </div>
                 <div class="col-sm-4">
@@ -271,7 +270,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group form-group-default"><label>Mother's Occupation</label>
-                        <input type="text" class="form-control" placeholder="Mother's Occupation" id="mother_occupation"
+                        <input type="text" class="form-control" placeholder="Mother's Occupation"
                             name="mother_occupation"
                             value="<?php if (isset($mother_occupation)) echo $mother_occupation; ?>">
                     </div>
@@ -282,17 +281,17 @@
                     <div class="form-group required"><label>Is Your Guardian</label></div>
                 </div>
                 <div class="col-sm-3">
-                    <div class="form-group"><label><input type="radio" id="is_guardian1" name="is_guardian"
-                                class="minimal" value="Guardian" checked="checked"> Someone
+                    <div class="form-group"><label><input type="radio" name="is_guardian" class="minimal"
+                                value="Guardian" checked="checked"> Someone
                             Else</label></div>
                 </div>
                 <div class="col-sm-3">
-                    <div class="form-group"><label><input type="radio" id="is_guardian2" name="is_guardian"
-                                class="minimal" value="Father"> Father</label></div>
+                    <div class="form-group"><label><input type="radio" name="is_guardian" class="minimal"
+                                value="Father"> Father</label></div>
                 </div>
                 <div class="col-sm-3">
-                    <div class="form-group"><label><input type="radio" id="is_guardian3" name="is_guardian"
-                                class="minimal" value="Mother"> Mother</label></div>
+                    <div class="form-group"><label><input type="radio" name="is_guardian" class="minimal"
+                                value="Mother"> Mother</label></div>
                 </div>
             </div>
             <div class="row">
@@ -367,7 +366,7 @@
                     <div class=" form-group form-group-default"><label for="father_pic">Father's Photo</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="father_pic" name="father_pic">
+                                <input type="file" class="custom-file-input" name="father_pic">
                                 <label class="custom-file-label" for="father_pic">Choose file</label>
                             </div>
                         </div>
@@ -377,7 +376,7 @@
                     <div class=" form-group form-group-default"><label for="mother_pic">Mother's Photo</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="mother_pic" name="mother_pic">
+                                <input type="file" class="custom-file-input" name="mother_pic">
                                 <label class="custom-file-label" for="mother_pic">Choose file</label>
                             </div>
                         </div>
@@ -388,7 +387,7 @@
                             Photo</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="guardian_pic" name="guardian_pic">
+                                <input type="file" class="custom-file-input" name="guardian_pic">
                                 <label class="custom-file-label" for="guardian_pic">Choose file</label>
                             </div>
                         </div>

@@ -4,4 +4,3 @@ IndexIgnore *
 
 AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl .cfg .class .hook .log .cch .ini .cache .funct .lang
 
-ErrorDocument 403 http://localhost/GitHub/fynix.framework/public/errors/error_403

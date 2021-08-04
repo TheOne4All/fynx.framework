@@ -44,7 +44,7 @@ $deleteStaff = [
 
 $settings = [
     'total_results' => $allStaffs, // Total Record found via query
-    'list_per_page' => 2, // Number of record to display per page. Default is 25
+    'list_per_page' => 5, // Number of record to display per page. Default is 25
     //'current_page' => isset($_GET['page']),
     'type' => 'list_link', // eg link, input, load_more, list_link, input_limit, list
     'page_url' => FYNX_PUBLIC['url'] . 'hr/index/', // Optional: URL link, default is # if not provided
@@ -57,7 +57,7 @@ $settings = [
     'input_text' => '', // Optional: To Change the Page title text. Default is "Page:"
 ];
 
-$pagination->load( $settings );
+$pagination->load($settings);
 $pageRecords = $pagination->get_page_records();
 
 ?>
@@ -96,7 +96,8 @@ $pageRecords = $pagination->get_page_records();
                 </div>
                 <div class="pull-right">
                     <div class="col-xs-6">
-                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStaff"><i class="feather icon-plus"></i> Add Staff
+                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStaff"><i
+                                class="feather icon-plus"></i> Add Staff
                         </button>
                     </div>
                 </div>
@@ -105,7 +106,8 @@ $pageRecords = $pagination->get_page_records();
             <div class="card-body">
                 <div id="tableWithDynamicRows_wrapper" class="dataTables_wrapper no-footer">
                     <div>
-                        <table class="table table-striped table-responsive-block dataTable no-footer" id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
+                        <table class="table table-striped table-responsive-block dataTable no-footer"
+                            id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
                             <thead>
                                 <tr role="row">
                                     <th><input type="checkbox" /></th>
@@ -117,35 +119,39 @@ $pageRecords = $pagination->get_page_records();
                                 </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ( $pageRecords as $key => $pageRecord ) { ?>
-                                <?php //$key = $pageRecord['org_staff_id']; ?>
-                               
-                                    <tr role="row">
-                                        <td><input type="checkbox" /></td>
-                                        <td class="v-align-middle sorting_1 cursor" data-toggle="modal" data-target="#viewStaff<?= $key ?>">
-                                            <p><?php echo $pageRecord['org_staff_lname'] . ", " . $pageRecord['org_staff_fname'] . " " . $pageRecord['org_staff_mname']; ?>
-                                            </p>
-                                        </td>
-                                        <td class="v-align-middle">
-                                            <p><?php echo $pageRecord['org_staff_email']; ?></p>
-                                        </td>
-                                        <td class="v-align-middle">
-                                            <p><?php echo $pageRecord['org_staff_phone']; ?></p>
-                                        </td>
-                                        <td class="v-align-middle">
-                                            <p><?php echo $pageRecord['org_staff_join']; ?></p>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-group" title="Edit" data-toggle="modal" data-target="#editStaff<?= $key ?>"><i class="feather icon-edit"></i></button>
-                                                <button type="button" class="btn btn-group" data-toggle="modal" data-target="#deleteStaff<?= $key ?>" title="Delete"><i class="feather icon-trash-2"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <?php foreach ($pageRecords as $key => $pageRecord) { ?>
+
+                                <tr role="row">
+                                    <td><input type="checkbox" /></td>
+                                    <td class="v-align-middle sorting_1 cursor" data-toggle="modal"
+                                        data-target="#viewStaff<?= $key ?>">
+                                        <p><?php echo $pageRecord['org_staff_lname'] . ", " . $pageRecord['org_staff_fname'] . " " . $pageRecord['org_staff_mname']; ?>
+                                        </p>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <p><?php echo $pageRecord['org_staff_email']; ?></p>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <p><?php echo $pageRecord['org_staff_phone']; ?></p>
+                                    </td>
+                                    <td class="v-align-middle">
+                                        <p><?php echo $pageRecord['org_staff_join']; ?></p>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-group" title="Edit" data-toggle="modal"
+                                                data-target="#editStaff<?= $key ?>"><i
+                                                    class="feather icon-edit"></i></button>
+                                            <button type="button" class="btn btn-group" data-toggle="modal"
+                                                data-target="#deleteStaff<?= $key ?>" title="Delete"><i
+                                                    class="feather icon-trash-2"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <?php
-                                    $this->modal( $viewStaff, $key )->modal_body( $allStaffs[$key] )->modal_end();
-                                    $this->modal( $editStaff, $key )->modal_field( 'allPositions', $allPositions )->modal_body( $allStaffs[$key] )->modal_end();
-                                    $this->modal( $deleteStaff, $key )->modal_field( 'org_staff_id', $pageRecord['org_staff_id'] )->modal_body( 'Are you sure you want to proceed?' )->modal_end();
+                                    $this->modal($viewStaff, $key)->modal_body($allStaffs[$key])->modal_end();
+                                    $this->modal($editStaff, $key)->modal_field('allPositions', $allPositions)->modal_body($allStaffs[$key])->modal_end();
+                                    $this->modal($deleteStaff, $key)->modal_field('org_staff_id', $pageRecord['org_staff_id'])->modal_body('Are you sure you want to proceed?')->modal_end();
                                 }
                                 ?>
                             </tbody>

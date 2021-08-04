@@ -59,13 +59,14 @@ class Processor
     */
 	public function connector()
 	{
-		$sysConfig = require FYNX_SYSTEM['configs'] . 'sys.cfg';
-		// $sysConfig = ( ! defined( 'FYNX_SYSCONFIG' ) ) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
+		// $sysConfig = require FYNX_SYSTEM['configs'] . 'sys.cfg';
+		$sysConfig = ( ! defined( 'FYNX_SYSCONFIG' ) ) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
 
 		$defaultDB = $sysConfig['connections'];
 		$database = new FynxDatabase($defaultDB[$sysConfig['default_db']]);
 
 		return $database;
+
 	}
 
 	/*
@@ -208,14 +209,14 @@ class Processor
 		}
 
 		$pagination = "";
-		if (!is_null($pager)) {
-			if (is_array($pager)) {
+		if ( ! is_null( $pager ) ) {
+			if ( is_array( $pager ) ) {
 				$limit = $pager['limit'];
-				$offset = ($pager['page'] - 1) * $limit;
+				$offset = ( $pager['page'] - 1 ) * $limit;
 				$pagination = "LIMIT {$offset}, {$limit}";
 			}
 		}
-
+	
 		$this->field = $field;
 		$this->object = "SELECT {$this->field} FROM {$table} " . $pagination;
 		return $this;

@@ -46,7 +46,6 @@ class Mapper
                         // filters for Parameters/Props as array
                         if ($url) {
                             $this->props = array_values($url);
-
                         }
 
                         // group all URL address properties to locate Funtions/Methods/Hooks in Class/Property/Module
@@ -63,7 +62,7 @@ class Mapper
         } else {
             require_once FYNX_PUBLIC['hooks'] . $this->module . '.hook';
             $this->module = new $this->module;
-            
+
 
             // group all URL address properties to locate Funtions/Methods/Hooks in Class/Property/Module
             call_user_func_array([$this->module, $this->hook], $this->props);
@@ -93,5 +92,5 @@ class Mapper
     }
 }
 
-// $mapper = new Mapper;
+$mapper = new Mapper;
 // echo "<h1>Mapper</h1>";

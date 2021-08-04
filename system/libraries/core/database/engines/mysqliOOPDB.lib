@@ -15,7 +15,7 @@
 *
 **/
 
-class MySQLi {
+class MySQLi_ {
 
     private $_conn;
 
@@ -102,5 +102,3 @@ class MySQLi {
     }
     
 }
-
-?>

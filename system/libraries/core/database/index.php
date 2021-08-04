@@ -37,5 +37,3 @@
 
     // if ( $user->is_login() )
     //     echo"yes";
-    
-?>

@@ -287,9 +287,10 @@ class Autoloader
 	 * @access Public
 	 * @return Bool
 	 * @param Array | String $directories -> List of diretory in array or a single folder in string
+	 * @param Byte $loadCoreClass -> Switch loading default core library classes with 1 or 0
 	 *
 	 **/
-	public function load_files($directories = NULL)
+	public function load_files($directories = NULL, $loadCoreClass = 0)
 	{
 
 		if (!empty($directories))
@@ -304,18 +305,16 @@ class Autoloader
 				// log here: Invalid folder value, folders input not array
 				return FALSE;
 			}
-
 			$files = $this->_get_directory_files($this->_directories);
-			$this->_load_file($files);
-			// return TRUE;
+			$this->_load_file($files, $loadCoreClass);
+			return TRUE;
 		} else {
 
 			foreach ($this->_directories as $directory) {
-
 				$files = $this->_get_directory_files($directory);
-				$this->_load_file($files);
+				$this->_load_file($files, $loadCoreClass);
 			}
-			// return TRUE;
+			return TRUE;
 		}
 	}
 
@@ -328,30 +327,25 @@ class Autoloader
 	 * @param Array $files -> Folder's files to be loaded
 	 *
 	 **/
-	private function _load_file($files = Null)
+	private function _load_file($files = Null, $loadCoreClass = 0)
 	{
-		// $unloadFiles = $this->_set_unload_files();
-		// $unloadFiles[] = 'autoloader.php';
-		// $unloadFiles1 = array_unique( $unloadFiles );
-
-		// var_dump( $this->_unloadFiles);
 
 		foreach ($files as $file) {
 
 			if (is_array($file)) {
-
-				$this->_load_file($file);
-			}
-
-			if (!is_array($file)) {
-
+				$this->_load_file($file, $loadCoreClass);
+			} else {
 				if (mime_content_type($file) != 'text/plain') {
 
 					if (file_exists($file)) {
 
 						$fileName = basename($file);
+						$dirName = dirname($file) . '/';
+						// echo $fileName . "<br>";
+						// echo $dirName . "<br>";
+						// var_dump($this->_unloadFiles);
 
-						if (!in_array($fileName, $this->_unloadFiles)) {
+						if (!in_array($fileName, $this->_unloadFiles) && !in_array($dirName, $this->_unloadFiles)) {
 
 							$fileExtension = pathinfo($file, PATHINFO_EXTENSION);
 
@@ -360,6 +354,7 @@ class Autoloader
 								$getName = pathinfo($file, PATHINFO_FILENAME);
 
 								if (!in_array($getName, ['app', 'autoload'])) {
+
 									$strVariable = $getName . 'Config';
 									$strCapVariable = strtoupper('Fynx_' . $strVariable);
 									${$strVariable} = $this->_include_file($file, TRUE);
@@ -370,47 +365,19 @@ class Autoloader
 									}
 								}
 							} else {
-
+								// echo $file . "<br>";
 								$this->_include_file($file);
 							}
 
-							if (array_key_exists($fileName, $this->_autoloadConfig['load_class'])) {
+							if ($loadCoreClass == 1) {
+								if (array_key_exists($fileName, $this->_autoloadConfig['load_class'])) {
 
-								$fileVariable = $this->_autoloadConfig['load_class'][$fileName];
-								$this->_include_file($file);
-								${lcfirst($fileVariable)} = new $fileVariable;
-								// $this->instantiateClass[lcfirst($fileVariable)] = ${lcfirst($fileVariable)};
-
-								// ${lcfirst($this->_autoloadConfig['load_class'][$fileName])} = new $this->_autoloadConfig['load_class'][$fileName];
-								// $this->instantiateClass[lcfirst($this->_autoloadConfig['load_class'][$fileName])] = ${lcfirst($this->_autoloadConfig['load_class'][$fileName])};
+									$this->_include_file($file);
+									${lcfirst($this->_autoloadConfig['load_class'][$fileName])} = new $this->_autoloadConfig['load_class'][$fileName];
+									$this->instantiateClass[lcfirst($this->_autoloadConfig['load_class'][$fileName])] = ${lcfirst($this->_autoloadConfig['load_class'][$fileName])};
+								}
 							} else {
-
-								// $fileExtension = pathinfo( $file, PATHINFO_EXTENSION );
-
-								// if ( $fileExtension == 'cfg' ) {
-
-								// 	$getName = pathinfo( $file, PATHINFO_FILENAME );
-
-								// 	if ( ! in_array( $getName, [ 'app', 'autoload' ] ) ) {
-
-								// 		$strVariable = $getName . 'Config';
-								// 		$strCapVariable = strtoupper( 'Fynx_' . $strVariable );
-								// 		${ $strVariable } = $this->_include_file( $file, TRUE );
-
-								// 		if ( ! defined( $strCapVariable ) ) {
-								// 			// var_dump( ${ $strVariable } );
-								// 			define( $strCapVariable, ${ $strVariable } );
-
-								// 		}
-
-								// 	}
-
-								// } else {
-
-								// 	$this->_include_file( $file );
-
-								// }
-
+								return FALSE;
 							}
 						}
 					}
@@ -427,37 +394,9 @@ class Autoloader
 		}
 
 		if (is_array($arrayFile)) {
-
-			foreach ($arrayFile as $file) {
-
-				if (is_array($file)) {
-
-					$files[] = $this->_set_unload_files($file);
-				} else {
-
-					if (file_exists($file)) {
-
-						if (is_dir($file)) {
-
-							foreach ($this->_get_directory_files($file) as $key) {
-
-								$files[] = (is_array($key)) ? $this->_set_unload_files($key) : $this->_get_filenames($key);
-							}
-						} else {
-
-							$files[] = $file;
-						}
-					}
-					$files[] = $file;
-				}
-			}
-			$files[] = 'autoloader.php';
-
-			$this->_unloadFiles = array_unique($files);
-			// var_dump( $this->_unloadFiles);
-			// return $files;
-
+			$this->_unloadFiles = array_unique($arrayFile);
 		}
+
 		return FALSE;
 	}
 
@@ -535,7 +474,7 @@ class Autoloader
 	 * @param String $dirPath -> Directory/folder path
 	 *
 	 **/
-	private function _get_directory_files($dirPath)
+	private function _get_directory_files($dirPath, $level = 0)
 	{
 
 		if (!is_dir($dirPath)) {

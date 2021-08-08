@@ -3,8 +3,6 @@
 <!-- Modal Window Layout -->
 <?php
 
-$pagination = $autoLoader->instantiateClass['fynxPagination'];
-
 $viewStaff = [
     'name' => 'viewStaff',
     'title' => 'Staff Record',
@@ -57,8 +55,8 @@ $settings = [
     'input_text' => '', // Optional: To Change the Page title text. Default is "Page:"
 ];
 
-$pagination->load($settings);
-$pageRecords = $pagination->get_page_records();
+$this->pagination->load($settings);
+$pageRecords = $this->pagination->get_page_records();
 
 ?>
 
@@ -161,15 +159,23 @@ $pageRecords = $pagination->get_page_records();
                         <div>
                             <div class="dataTables_paginate paging_simple_numbers" id="tableWithDynamicRows_paginate">
                                 <ul class="">
-                                    <?= $pagination->display_paging() ?>
+                                    <?= $this->pagination->display_paging() ?>
                                 </ul>
                             </div>
-                            <?= $pagination->display_stats() ?>
+                            <?= $this->pagination->display_stats() ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 </div>

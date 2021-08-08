@@ -2,14 +2,6 @@
 
 error_reporting(E_ALL | E_WARNING | E_NOTICE);
 ini_set('display_errors', TRUE);
-// $fynxDatabase = $autoLoader->instantiateClass['fynxDatabase'];
-
-
-// require_once '../system/configs/app.cfg';
-// require_once 'database.lib';
-// require_once 'template.lib';
-// require_once 'Users.lib';
-
 /**
  *
  * The Processor class is the engine room of all business logic and processing,
@@ -60,13 +52,12 @@ class Processor
 	public function connector()
 	{
 		// $sysConfig = require FYNX_SYSTEM['configs'] . 'sys.cfg';
-		$sysConfig = ( ! defined( 'FYNX_SYSCONFIG' ) ) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
+		$sysConfig = (!defined('FYNX_SYSCONFIG')) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
 
 		$defaultDB = $sysConfig['connections'];
 		$database = new FynxDatabase($defaultDB[$sysConfig['default_db']]);
 
 		return $database;
-
 	}
 
 	/*
@@ -209,14 +200,14 @@ class Processor
 		}
 
 		$pagination = "";
-		if ( ! is_null( $pager ) ) {
-			if ( is_array( $pager ) ) {
+		if (!is_null($pager)) {
+			if (is_array($pager)) {
 				$limit = $pager['limit'];
-				$offset = ( $pager['page'] - 1 ) * $limit;
+				$offset = ($pager['page'] - 1) * $limit;
 				$pagination = "LIMIT {$offset}, {$limit}";
 			}
 		}
-	
+
 		$this->field = $field;
 		$this->object = "SELECT {$this->field} FROM {$table} " . $pagination;
 		return $this;

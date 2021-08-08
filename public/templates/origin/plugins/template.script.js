@@ -270,6 +270,27 @@ function TemplateOrigin() {
     // console.log(request.status);
   };
 
+  // If Class Name exist, change Text of all Element to Active Menu List Text
+  this.autoChangeElementTxt = function (activeHTMLNodeOrTxt) {
+    if (document.querySelectorAll(".changeToMenuTxt")) {
+      for (
+        let index = 0;
+        index < document.querySelectorAll(".changeToMenuTxt").length;
+        index++
+      ) {
+        if (activeHTMLNodeOrTxt != "") {
+          if (activeHTMLNodeOrTxt.textContent) {
+            document.querySelectorAll(".changeToMenuTxt")[index].innerText =
+              activeHTMLNodeOrTxt.textContent;
+          } else {
+            document.querySelectorAll(".changeToMenuTxt")[index].innerText =
+              activeHTMLNodeOrTxt;
+          }
+        }
+      }
+    }
+  };
+
   // Toggle between displaying full left menu-sidebar and icon menu display
   this.toggleMenuBar = function () {
     if (document.querySelector("[data-toggle-pin='sidebar']")) {
@@ -359,9 +380,8 @@ function TemplateOrigin() {
       document
         .querySelector(".profile-dropdown-toggle")
         .addEventListener("click", function () {
-          const querySelectorResult = document.querySelector(
-            ".header .dropdown"
-          );
+          const querySelectorResult =
+            document.querySelector(".header .dropdown");
           const querySelectorResult1 = document.querySelector(
             ".header .profile-dropdown"
           );
@@ -516,9 +536,8 @@ function TemplateOrigin() {
         });
 
         if (targetModal.querySelectorAll(".close, .cancel")) {
-          let elementTargetModalArray = targetModal.querySelectorAll(
-            ".close, .cancel"
-          );
+          let elementTargetModalArray =
+            targetModal.querySelectorAll(".close, .cancel");
           for (let j = 0; j < elementTargetModalArray.length; j++) {
             elementTargetModalArray[j].addEventListener("click", function () {
               targetModal.classList.remove("show");
@@ -557,9 +576,12 @@ function TemplateOrigin() {
         activeMenuLi,
         activeSubMenuLi,
         matchHref,
-        sideMenuLi = document.querySelectorAll(
-          ".page-sidebar .sidebar-menu .menu-items > li"
-        ),
+        // Change the value to your current Menu List item node
+        sideMenuLiNode = ".page-sidebar .sidebar-menu .menu-items > li",
+        /* Change the value to your current Menu List HTML content node
+          if none, leave empty */
+        sideMenuLiTxtNode = "",
+        sideMenuLi = document.querySelectorAll(sideMenuLiNode),
         subSideMenu;
 
       // Compare baseURL with page Load URL to style element
@@ -586,6 +608,15 @@ function TemplateOrigin() {
             }
           }
         } else {
+          if (
+            index + 1 == sideMenuLi.length &&
+            document.baseURI.search(
+              activeMenuLi.querySelector("a").getAttribute("href")
+            ) == -1
+          ) {
+            activeMenuLi = "";
+            break;
+          }
           matchHref = activeMenuLi.querySelector("a").getAttribute("href");
         }
         index++;
@@ -594,26 +625,49 @@ function TemplateOrigin() {
         index < activeMenuLi.length
       );
 
-      // Add Style to active Sub-Menu Element
-      if (activeMenuLi.querySelector("ul.sub-menu")) {
-        activeMenuLi.querySelector("ul.sub-menu").classList.add("block");
-        activeMenuLi.querySelector("span.arrow").classList.add("open");
-        activeSubMenuLi
-          .querySelector("span.icon-thumbnail")
-          .classList.remove(this.themeSidebarMenuSubmenuIcon);
-        activeSubMenuLi
-          .querySelector("span.icon-thumbnail")
-          .classList.add(this.themeActiveSidebarMenuSubmenuIcon);
+      if (activeMenuLi != "") {
+        // Add Style to active Sub-Menu Element
+        if (activeMenuLi.querySelector("ul.sub-menu")) {
+          activeMenuLi.querySelector("ul.sub-menu").classList.add("block");
+          activeMenuLi.querySelector("span.arrow").classList.add("open");
+          activeSubMenuLi
+            .querySelector("span.icon-thumbnail")
+            .classList.remove(this.themeSidebarMenuSubmenuIcon);
+          activeSubMenuLi
+            .querySelector("span.icon-thumbnail")
+            .classList.add(this.themeActiveSidebarMenuSubmenuIcon);
+        }
+
+        // Add Style to active Menu Element
+        activeMenuLi.classList.add("active");
+        // Check if extra Menu List Text Element Node exist
+        if (sideMenuLiTxtNode != "") {
+          activeHTMLNode = activeMenuLi.querySelector(sideMenuLiTxtNode);
+        } else {
+          activeHTMLNode = activeMenuLi;
+        }
+      } else {
+        if (document.querySelector("[data-page-title]")) {
+          activeHTMLNode = document
+            .querySelector("[data-page-title]")
+            .getAttribute("data-page-title");
+        } else {
+          activeHTMLNode = "No Data-Page-Title";
+        }
       }
 
-      // Add Style to active Menu Element
-      activeMenuLi.classList.add("active");
-      activeMenuLi
-        .querySelector("span.icon-thumbnail")
-        .classList.remove(this.themeSidebarMenuIcon);
-      activeMenuLi
-        .querySelector("span.icon-thumbnail")
-        .classList.add(this.themeActiveSidebarMenuIcon);
+      this.autoChangeElementTxt(activeHTMLNode);
+
+      // console.log(activeHTMLNode.textContent);
+      // Custom modification
+      if (activeMenuLi != "") {
+        activeMenuLi
+          .querySelector("span.icon-thumbnail")
+          .classList.remove(this.themeSidebarMenuIcon);
+        activeMenuLi
+          .querySelector("span.icon-thumbnail")
+          .classList.add(this.themeActiveSidebarMenuIcon);
+      }
 
       // Check if URL exist
       if (this.checkURL(document.baseURI) == false) {
@@ -624,10 +678,12 @@ function TemplateOrigin() {
         // On Click event, style element
         sideMenuLi[i].addEventListener("click", function () {
           // Remove Style from current active Menu and Sub-Menu
-          activeMenuLi.classList.remove("active");
-          if (activeMenuLi.querySelector("ul")) {
-            activeMenuLi.querySelector("ul").classList.remove("block");
-            activeMenuLi.querySelector("span.arrow").classList.remove("open");
+          if (activeMenuLi != "") {
+            activeMenuLi.classList.remove("active");
+            if (activeMenuLi.querySelector("ul")) {
+              activeMenuLi.querySelector("ul").classList.remove("block");
+              activeMenuLi.querySelector("span.arrow").classList.remove("open");
+            }
           }
           // Add Style to current Menu and Sub-Menu
           sideMenuLi[i].classList.add("active");

@@ -3,8 +3,6 @@
 <!-- Modal Window Layout -->
 <?php
 
-$pagination = $autoLoader->instantiateClass['fynxPagination'];
-
 $viewStudent = [
     'name' => 'viewStudent',
     'title' => 'Student Record',
@@ -55,8 +53,8 @@ $settings = [
     'input_text' => '', // Optional: To Change the Page title text. Default is "Page:"
 ];
 
-$pagination->load($settings);
-$pageRecords = $pagination->get_page_records();
+$this->pagination->load($settings);
+$pageRecords = $this->pagination->get_page_records();
 
 ?>
 
@@ -93,8 +91,7 @@ $pageRecords = $pagination->get_page_records();
                 </div>
                 <div class="pull-right">
                     <div class="col-xs-6">
-                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStudent"><i
-                                class="feather icon-plus"></i> Add Student
+                        <button class="btn btn-cons" data-toggle="modal" data-target="#addStudent"><i class="feather icon-plus"></i> Add Student
                         </button>
                     </div>
                 </div>
@@ -103,8 +100,7 @@ $pageRecords = $pagination->get_page_records();
             <div class="card-body">
                 <div id="tableWithDynamicRows_wrapper" class="dataTables_wrapper no-footer">
                     <div>
-                        <table class="table table-striped table-responsive-block dataTable no-footer"
-                            id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
+                        <table class="table table-striped table-responsive-block dataTable no-footer" id="tableWithDynamicRows" role="grid" aria-describedby="tableWithDynamicRows_info">
                             <thead>
                                 <tr role="row">
                                     <th class="sorting_asc">FullName</th>
@@ -117,32 +113,27 @@ $pageRecords = $pagination->get_page_records();
                             <tbody>
                                 <?php
                                 foreach ($pageRecords as $key => $pageRecord) { ?>
-                                <tr role="row">
-                                    <td class="v-align-middle sorting_1 cursor" data-toggle="modal"
-                                        data-target="#viewStudent<?= $key ?>">
-                                        <p><?php echo $pageRecord['lastname'] . ", " . $pageRecord['firstname'] . " " . $pageRecord['middlename']; ?>
-                                        </p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p><?php echo $pageRecord['email']; ?></p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p><?php echo $pageRecord['mobileno']; ?></p>
-                                    </td>
-                                    <td class="v-align-middle">
-                                        <p><?php echo $pageRecord['created_at']; ?></p>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-group" title="Edit" data-toggle="modal"
-                                                data-target="#editStudent<?= $key ?>"><i
-                                                    class="feather icon-edit"></i></button>
-                                            <button type="button" class="btn btn-group" data-toggle="modal"
-                                                data-target="#deleteStudent<?= $key ?>" title="Delete"><i
-                                                    class="feather icon-trash-2"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr role="row">
+                                        <td class="v-align-middle sorting_1 cursor" data-toggle="modal" data-target="#viewStudent<?= $key ?>">
+                                            <p><?php echo $pageRecord['lastname'] . ", " . $pageRecord['firstname'] . " " . $pageRecord['middlename']; ?>
+                                            </p>
+                                        </td>
+                                        <td class="v-align-middle">
+                                            <p><?php echo $pageRecord['email']; ?></p>
+                                        </td>
+                                        <td class="v-align-middle">
+                                            <p><?php echo $pageRecord['mobileno']; ?></p>
+                                        </td>
+                                        <td class="v-align-middle">
+                                            <p><?php echo $pageRecord['created_at']; ?></p>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-group" title="Edit" data-toggle="modal" data-target="#editStudent<?= $key ?>"><i class="feather icon-edit"></i></button>
+                                                <button type="button" class="btn btn-group" data-toggle="modal" data-target="#deleteStudent<?= $key ?>" title="Delete"><i class="feather icon-trash-2"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 <?php
                                     $this->modal($viewStudent, $key)->modal_body($allStudents[$key])->modal_end();
                                     $this->modal($editStudent, $key)->modal_body($allStudents[$key])->modal_end();
@@ -156,10 +147,10 @@ $pageRecords = $pagination->get_page_records();
                         <div>
                             <div class="dataTables_paginate paging_simple_numbers" id="tableWithDynamicRows_paginate">
                                 <ul class="">
-                                    <?= $pagination->display_paging() ?>
+                                    <?= $this->pagination->display_paging() ?>
                                 </ul>
                             </div>
-                            <?= $pagination->display_stats() ?>
+                            <?= $this->pagination->display_stats() ?>
                         </div>
                     </div>
                 </div>

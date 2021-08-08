@@ -1,6 +1,23 @@
 <?php
 
-//require_once 'pagination.lib';
+/**
+ *
+ * The Template class is a flexible libraby responsible for rendering 
+ * all template pages, including modals and master page extension to 
+ * other pages.
+ *
+ * @version:       1.11.19
+ * @package:       FYNX Framework
+ * @author:        Jencube Team
+ * @license:       http://opensource.org/licenses/gpl-license.php 
+ *                 GNU General Public License (GPL)
+ * @copyright:     Copyright (c) 2013 - 2020 Jencube
+ * @github:        @deusex0 & @TheOne4All
+ * @filesource:    system/libraries/template.lib
+ *
+ **/
+
+require_once 'pagination.lib';
 
 class Template
 {
@@ -57,7 +74,7 @@ class Template
         $this->file_path = $file_path;
         $this->data = $data;
         $this->master_path = NULL;
-        //$this->pagination = new Pagination();
+        $this->pagination = new FynxPagination();
     }
 
     /*
@@ -110,17 +127,17 @@ class Template
     | other Template Layouts that would require it's features.
     |
     */
-    public function extend_template( $master_path = NULL, $_content = NULL, $data = NULL )
+    public function extend_template($master_path = NULL, $_content = NULL, $data = NULL)
     {
         $this->data = $data;
         $this->master_content = $_content;
-        if ( !is_null( $this->data ) ) {
-            foreach ( $this->data as $key => $value ) {
-                ${ $key } = $value;
+        if (!is_null($this->data)) {
+            foreach ($this->data as $key => $value) {
+                ${$key} = $value;
             }
         }
-        if ( file_exists( FYNX_PUBLIC['template'] . strtolower( $master_path ) . '.tpl' ) ) {
-            require_once FYNX_PUBLIC['template'] . strtolower( $master_path ) . '.tpl';
+        if (file_exists(FYNX_PUBLIC['template'] . strtolower($master_path) . '.tpl')) {
+            require_once FYNX_PUBLIC['template'] . strtolower($master_path) . '.tpl';
         } else {
             require_once $this->master_content;
         }
@@ -197,7 +214,7 @@ class Template
     {
         if (!is_null($field) && !is_array($value) && !is_object($value)) :
             $this->input = $this->input . "<input type='hidden' name='" . $field . "' value='" . $value . "'>";
-        elseif ( ( !is_null($field) && is_array($value) ) || ( !is_null($field) && is_object($value) ) ) :
+        elseif ((!is_null($field) && is_array($value)) || (!is_null($field) && is_object($value))) :
             $this->data[$field] = $value;
         else :
             $this->input = NULL;

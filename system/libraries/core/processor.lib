@@ -2,6 +2,7 @@
 
 error_reporting(E_ALL | E_WARNING | E_NOTICE);
 ini_set('display_errors', TRUE);
+
 /**
  *
  * The Processor class is the engine room of all business logic and processing,
@@ -51,8 +52,8 @@ class Processor
     */
 	public function connector()
 	{
-		// $sysConfig = require FYNX_SYSTEM['configs'] . 'sys.cfg';
-		$sysConfig = (!defined('FYNX_SYSCONFIG')) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
+		$sysConfig = require FYNX_SYSTEM['configs'] . 'sys.cfg';
+		// $sysConfig = (!defined('FYNX_SYSCONFIG')) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
 
 		$defaultDB = $sysConfig['connections'];
 		$database = new FynxDatabase($defaultDB[$sysConfig['default_db']]);
@@ -88,7 +89,7 @@ class Processor
 		} else {
 			$this->error();
 		}
-		// exit;
+		exit;
 	}
 
 	/*
@@ -129,7 +130,7 @@ class Processor
 		} else {
 			$this->error();
 		}
-		// exit;
+		exit;
 	}
 
 	/*
@@ -152,7 +153,7 @@ class Processor
 		$this->page_request_url = FYNX_PUBLIC['template'] . $this->template_name . '/resources/pages/errors/index.tpl';
 		$template = new Template($this->page_request_url, $data);
 		$template->output();
-		// exit;
+		exit;
 	}
 
 	/*
@@ -176,6 +177,30 @@ class Processor
 			$string = str_replace($needle, $replace, $string);
 		}
 		return $string;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | GUID Generator
+    |--------------------------------------------------------------------------
+    |
+	| This function helps generate Globally/Universally Unique Identifiers 
+	| (GUID/UUID).
+    |
+    */
+	public function guidv4($data = null)
+	{
+		// Generate 16 bytes (128 bits) of random data or use the data passed into the function.
+		$data = $data ?? random_bytes(16);
+		assert(strlen($data) == 16);
+
+		// Set version to 0100
+		$data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+		// Set bits 6-7 to 10
+		$data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+
+		// Output the 36 character UUID.
+		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
 	/*
@@ -553,12 +578,31 @@ class Processor
     */
 	protected function go($type = NULL, $option = "all")
 	{
-
+		$data = array(
+			'code' => '607',
+			'subject' => 'Schema / Query Error!',
+			'message' => 'Check your SQL Query Statement/Form assignment declarations for Errors or Table Schema Query Result is bool(FALSE). Also check your Database Table Structure for Type, Name, NULL values.'
+		);
 		$db = $this->connector();
 
 		switch ($type) {
 			case 'first':
 				echo "First Record Only!";
+				break;
+			case 'last_id':
+				if (strpos(serialize($this->object), 'INSERT')) :
+					if ($db->query($this->object) === TRUE) :
+						if ($db->affected_rows()) : return $db->insert_id();
+						else :
+							$data = array(
+								'code' => '608',
+								'subject' => 'Empty Last Inserted Record!',
+								'message' => 'Check your SQL Query Statement/Form assignment declarations for Errors or Table Schema Query Result is bool(FALSE). Also check your Database Table Structure for Type, Name, NULL values.'
+							);
+							$this->error($data);
+						endif;
+					endif;
+				endif;
 				break;
 			case 'cross':
 				$this->object = $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2;
@@ -617,18 +661,13 @@ class Processor
 						endif;
 					endif;
 				else :
-					$output = $db->query($this->object);
-					// echo $this->object;
-					if ($output !== FALSE) :
-						print_r("<h3>WARNING!</h3>Please use the Redirect() function to call up your Requested Page");
-						return TRUE;
+					if ($db->query($this->object) === TRUE) :
+						if ($db->affected_rows()) :
+							print_r("<h3>WARNING!</h3>Please use the Redirect() function to call up your Requested Page");
+							return TRUE;
+						endif;
 					endif;
 				endif;
-				$data = array(
-					'code' => '607',
-					'subject' => 'Schema / Query Error!',
-					'message' => 'Check your SQL Query Statement/Form assignment declarations for Errors or Table Schema Query Result is bool(FALSE). Also check your Database Table Structure for Type, Name, NULL values.'
-				);
 				$this->error($data);
 				break;
 		}

@@ -232,22 +232,22 @@ class FynxPagination
    **/
   public function __construct($data = NULL)
   {
-    if ( ! isset( $data['total_results'] ) || empty( $data['total_results'] ) ) {
+    if (!isset($data['total_results']) || empty($data['total_results'])) {
       $this->errorMsg[] = 'No result found.';
       return FALSE;
     }
 
     $this->totalResults = $data['total_results'];
-    $this->listPerPage = ( ! empty( $data['list_per_page'] ) ) ? $data['list_per_page'] : $this->listPerPage;
-    $this->currentPage = ( !empty( isset( $_GET['page'] ) ) ) ? $_GET['page'] : 1;
+    $this->listPerPage = (!empty($data['list_per_page'])) ? $data['list_per_page'] : $this->listPerPage;
+    $this->currentPage = (!empty(isset($_GET['page']))) ? $_GET['page'] : 1;
     $pageNum = $this->currentPage - 1;
-    if ($this->currentPage == 1) : 
+    if ($this->currentPage == 1) :
       $this->offSet = 0;
     else :
       $this->offSet = $pageNum * $this->listPerPage;
     endif;
 
-    $this->displayResults = array_slice( $this->totalResults, $this->offSet, $this->listPerPage);
+    $this->displayResults = array_slice($this->totalResults, $this->offSet, $this->listPerPage);
     $this->pageLink = (!empty($data['page_url'])) ? $data['page_url'] : '#';
     $this->type = (!empty($data['type'])) ? $data['type'] : $this->type;
     $this->prevBtnText = (!empty($data['prev_btn'])) ? $data['prev_btn'] : $this->prevBtnText;
@@ -297,8 +297,11 @@ class FynxPagination
   {
     $startPageNum = $this->offSet + 1;
     $endPageNum = $this->offSet + $this->listPerPage;
+    if ($endPageNum > count((array)$this->totalResults)) {
+      $endPageNum = count((array)$this->totalResults);
+    }
     $info = '<div class="dataTables_info" id="tableWithDynamicRows_info" role="status"
-    aria-live="polite">Showing <b>' . $startPageNum . ' to ' . $endPageNum . ' </b> of ' . count($this->totalResults) . ' entrie(s)</div>';
+    aria-live="polite">Showing <b>' . $startPageNum . ' to ' . $endPageNum . ' </b> of ' . count((array)$this->totalResults) . ' entrie(s)</div>';
     return $info;
   }
 

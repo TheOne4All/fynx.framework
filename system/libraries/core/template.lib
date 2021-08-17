@@ -280,16 +280,17 @@ class Template
         }
         if (is_array($data) && !empty(is_string($content))) :
             extract($data);
-            echo '<p class="no-margin p-b-5">' . $content . '</p>';
+            echo '<p class="">' . $content . '</p>';
         endif;
         if (!empty(is_string($data))  && is_null($content)) :
-            echo '<p class="no-margin p-b-5">' . $data . '</p>';
+            echo '<p class="">' . $data . '</p>';
         endif;
         if (is_array($data) && is_null($content)) :
             extract($data);
         endif;
         if (!is_null($this->url)) :
-            echo '<form method="POST" enctype="multipart/form-data" action="' . $this->url . '">';
+            $form_name = 'form_' . $this->name_key;
+            echo '<form id="' . $form_name . '" method="POST" enctype="multipart/form-data" action="' . $this->url . '">';
         endif;
         if (!is_null($this->input)) :
             echo $this->input;
@@ -321,7 +322,7 @@ class Template
                 if (!is_null($this->url)) :
                     echo '<button class="btn btn-cons btn-block" type="submit">' . $this->submit . '</button></form>';
                     if (!is_null($this->cancel)) :
-                        echo '<button class="btn btn-block cancel btn-danger">' . $this->cancel . '</button>';
+                        echo '<button class="btn btn-block cancel btn-danger" data-dismiss="modal">' . $this->cancel . '</button>';
                     endif;
                 endif;
                 echo "</div></div></div></div></div></div></section>";
@@ -331,7 +332,7 @@ class Template
                 if (!is_null($this->url)) :
                     echo '<div style="display:flex; justify-content:flex-end;">';
                     if (!is_null($this->cancel)) :
-                        echo '<button class="btn m-t-10 m-r-10 cancel btn-danger" type="button">' . $this->cancel . '</button>';
+                        echo '<button class="btn m-t-10 m-r-10 cancel btn-danger" type="button" data-dismiss="modal">' . $this->cancel . '</button>';
                     endif;
                     echo '<button class="btn btn-cons m-t-10" type="submit">' . $this->submit . '</button></div></form>';
                 endif;

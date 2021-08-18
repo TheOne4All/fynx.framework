@@ -20,6 +20,8 @@ ini_set('display_errors', TRUE);
  *
  **/
 
+require_once 'cryptor.lib';
+
 class Processor
 {
 	/**
@@ -41,6 +43,19 @@ class Processor
 	 *
 	 **/
 	public $data = array();
+
+	/*
+    |--------------------------------------------------------------------------
+    | Class constructor
+    |--------------------------------------------------------------------------
+    |
+    | Class constructor initialization to set the Variables
+    |
+    */
+	public function __construct()
+	{
+		$this->cryptor = new FynxCryptor();
+	}
 
 	/*
     |--------------------------------------------------------------------------
@@ -191,7 +206,12 @@ class Processor
 	public function guidv4($data = null)
 	{
 		// Generate 16 bytes (128 bits) of random data or use the data passed into the function.
-		$data = $data ?? random_bytes(16);
+		$phpVersion = phpversion();
+		if (floatval($phpVersion) >= 7) {
+			$data = $data ?? random_bytes(16);
+		} else {
+			$data = $data ?? openssl_random_pseudo_bytes(16);
+		}
 		assert(strlen($data) == 16);
 
 		// Set version to 0100
@@ -201,6 +221,46 @@ class Processor
 
 		// Output the 36 character UUID.
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | View Table Records
+    |--------------------------------------------------------------------------
+    |
+	| View all Records of a particular Table from the Database. Enter Table Name
+	| and Field List in the parameter provided  e.g: $table = 'school_tbl' and
+	| $field = 'id, name, email'. Leave Field Parameter to take Default value "*"
+    |
+    */
+	protected function view_create($table = NULL, $field = '*')
+	{
+		if (is_null($table)) {
+			$data = array(
+				'code' => '605',
+				'subject' => 'Missing Requested Data!',
+				'message' => 'There is no $_POST data array or Table name sent to this method. Check your send form.'
+			);
+			$this->error($data);
+		}
+		$this->field = $field;
+		$viewTableName = 'view_' . $table;
+		$this->object = "CREATE VIEW {$viewTableName} AS SELECT {$this->field} FROM {$table} FORCE INDEX (PRIMARY)";
+		return $this;
+	}
+
+	/*
+    |--------------------------------------------------------------------------
+    | Drop View Table
+    |--------------------------------------------------------------------------
+    |
+	| This function drops or deletes a specified View Table 
+    |
+    */
+	protected function view_delete($table)
+	{
+		$this->object = "DROP VIEW {$table}";
+		return $this;
 	}
 
 	/*

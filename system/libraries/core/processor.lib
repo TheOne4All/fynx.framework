@@ -180,17 +180,10 @@ class Processor
 	| into the database.
     |
     */
-	public function escape_chr($string, $specialChar = array())
+	public function escape($string)
 	{
-		if (!isset($specialChar) || empty($specialChar)) {
-			$specialChar = array(
-				"'" => "\'", "/" => "\/", "," => "\,",
-			);
-		}
-
-		foreach ($specialChar as $needle => $replace) {
-			$string = str_replace($needle, $replace, $string);
-		}
+		$db = $this->connector();
+		$string = $db->escape($string);
 		return $string;
 	}
 
@@ -321,7 +314,7 @@ class Processor
 		}
 		foreach ($request as $key => $value) {
 			$field_stack = $field_stack . "`" . trim($key) . "`" . ", ";
-			$value = $this->escape_chr($value);
+			$value = $this->escape($value);
 			$value = "IF('" . $value . "' = '', NULL, '" . $value . "')";
 			$value_stack = $value_stack .  $value . ", ";
 		}
@@ -354,7 +347,7 @@ class Processor
 			$this->error($data);
 		}
 		foreach ($request as $key => $value) {
-			$where_stack = $where_stack . trim($key) . "=" . "'" . $this->escape_chr($value) . "' AND ";
+			$where_stack = $where_stack . trim($key) . "=" . "'" . $this->escape($value) . "' AND ";
 		}
 		$where_stack = substr($where_stack, 0, -5);
 		$this->object = "DELETE FROM $table WHERE $where_stack";
@@ -384,7 +377,7 @@ class Processor
 			$this->error($data);
 		}
 		foreach ($request as $key => $value) {
-			$value = $this->escape_chr($value);
+			$value = $this->escape($value);
 			$value = "IF('" . $value . "' = '', NULL, '" . $value . "')";
 			$key_value_stack = $key_value_stack . trim($key) . "=" . $value . ",";
 		}

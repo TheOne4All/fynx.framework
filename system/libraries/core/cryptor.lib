@@ -18,9 +18,9 @@
 
 /*
 ////////// example ///////////
-$message   = 'Fynx-Framework';
+$cypto_message   = 'Fynx-Framework';
 $secret_key= 'sdfejkv6r7twefdgef';
-$encrypted = Cryptor::encrypt( $message,  $secret_key);
+$encrypted = Cryptor::encrypt( $cypto_message,  $secret_key);
 $decrypted = Cryptor::decrypt( $encrypted,$secret_key);
 */
 
@@ -49,20 +49,20 @@ class FynxCryptor
     /**
      * Encrypts (but does not authenticate) a message
      * 
-     * @param string $message - plaintext message
-     * @param string $key - encryption key (raw binary expected)
+     * @param string $cypto_message - plaintext message
+     * @param string $cypto_key - encryption key (raw binary expected)
      * @param boolean $encode - set to TRUE to return a base64-encoded 
      * @return string (raw binary)
      */
-    public static function unsafe_encrypt($message, $key, $encode = false)
+    public static function unsafe_encrypt($cypto_message, $cypto_key, $encode = false)
     {
         $nonceSize = openssl_cipher_iv_length(self::METHOD);
         $nonce = openssl_random_pseudo_bytes($nonceSize);
 
         $ciphertext = openssl_encrypt(
-            $message,
+            $cypto_message,
             self::METHOD,
-            $key,
+            $cypto_key,
             OPENSSL_RAW_DATA,
             $nonce
         );
@@ -78,28 +78,28 @@ class FynxCryptor
     /**
      * Decrypts (but does not verify) a message
      * 
-     * @param string $message - ciphertext message
-     * @param string $key - encryption key (raw binary expected)
+     * @param string $cypto_message - ciphertext message
+     * @param string $cypto_key - encryption key (raw binary expected)
      * @param boolean $encoded - are we expecting an encoded string?
      * @return string
      */
-    public static function unsafe_decrypt($message, $key, $encoded = false)
+    public static function unsafe_decrypt($cypto_message, $cypto_key, $encoded = false)
     {
         if ($encoded) {
-            $message = base64_decode($message, true);
-            if ($message === false) {
+            $cypto_message = base64_decode($cypto_message, true);
+            if ($cypto_message === false) {
                 throw new Exception('Encryption failure');
             }
         }
 
         $nonceSize = openssl_cipher_iv_length(self::METHOD);
-        $nonce = mb_substr($message, 0, $nonceSize, '8bit');
-        $ciphertext = mb_substr($message, $nonceSize, null, '8bit');
+        $nonce = mb_substr($cypto_message, 0, $nonceSize, '8bit');
+        $ciphertext = mb_substr($cypto_message, $nonceSize, null, '8bit');
 
         $plaintext = openssl_decrypt(
             $ciphertext,
             self::METHOD,
-            $key,
+            $cypto_key,
             OPENSSL_RAW_DATA,
             $nonce
         );
@@ -111,18 +111,18 @@ class FynxCryptor
     /**
      * Encrypts then MACs a message
      * 
-     * @param string $message - plaintext message
-     * @param string $key - encryption key (raw binary expected)
+     * @param string $cypto_message - plaintext message
+     * @param string $cypto_key - encryption key (raw binary expected)
      * @param boolean $encode - set to TRUE to return a base64-encoded string
      * @return string (raw binary)
      */
-    public static function encrypt($message, $key, $encode = false)
+    public static function encrypt($cypto_message, $cypto_key, $encode = false)
     {
-        $key = hex2bin(implode(unpack("H*", $key)));
-        list($encKey, $authKey) = self::splitKeys($key);
+        $cypto_key = hex2bin(implode(unpack("H*", $cypto_key)));
+        list($encKey, $authKey) = self::splitKeys($cypto_key);
 
         // Pass to UnsafeCrypto::encrypt
-        $ciphertext = self::unsafe_encrypt($message, $encKey);
+        $ciphertext = self::unsafe_encrypt($cypto_message, $encKey);
 
         // Calculate a MAC of the IV and ciphertext
         $mac = hash_hmac(self::HASH_ALGO, $ciphertext, $authKey, true);
@@ -137,28 +137,28 @@ class FynxCryptor
     /**
      * Decrypts a message (after verifying integrity)
      * 
-     * @param string $message - ciphertext message
-     * @param string $key - encryption key (raw binary expected)
+     * @param string $cypto_message - ciphertext message
+     * @param string $cypto_key - encryption key (raw binary expected)
      * @param boolean $encoded - are we expecting an encoded string?
      * @return string (raw binary)
      */
-    public static function decrypt($message, $key, $encoded = false)
+    public static function decrypt($cypto_message, $cypto_key, $encoded = false)
     {
-        $message = base64_decode($message);
-        $key = hex2bin(implode(unpack("H*", $key)));
-        list($encKey, $authKey) = self::splitKeys($key);
+        $cypto_message = base64_decode($cypto_message);
+        $cypto_key = hex2bin(implode(unpack("H*", $cypto_key)));
+        list($encKey, $authKey) = self::splitKeys($cypto_key);
         if ($encoded) {
-            $message = base64_decode($message, true);
-            if ($message === false) {
+            $cypto_message = base64_decode($cypto_message, true);
+            if ($cypto_message === false) {
                 throw new Exception('Encryption failure');
             }
         }
 
         // Hash Size -- in case HASH_ALGO is changed
         $hs = mb_strlen(hash(self::HASH_ALGO, '', true), '8bit');
-        $mac = mb_substr($message, 0, $hs, '8bit');
+        $mac = mb_substr($cypto_message, 0, $hs, '8bit');
 
-        $ciphertext = mb_substr($message, $hs, null, '8bit');
+        $ciphertext = mb_substr($cypto_message, $hs, null, '8bit');
 
         $calculated = hash_hmac(
             self::HASH_ALGO,

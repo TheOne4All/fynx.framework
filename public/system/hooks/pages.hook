@@ -5,6 +5,7 @@ class Pages extends Processor
 
     public function __construct()
     {
+
     }
 
     public function landing()

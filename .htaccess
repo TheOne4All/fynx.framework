@@ -1,6 +1,0 @@
-Options -Indexes
-
-IndexIgnore *
-
-AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl .cfg .class .hook .log .cch .ini .cache .funct .lang
-

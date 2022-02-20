@@ -20,8 +20,6 @@ ini_set('display_errors', true);
  *
  **/
 
-require_once 'cryptor.lib';
-
 class Processor
 {
     /**
@@ -32,7 +30,11 @@ class Processor
      * @var string
      *
      **/
-    protected $template_name = 'origin';
+    protected function template_name()
+    {
+        $this->template_name = isset($_SESSION['org']['default_template']) ? $_SESSION['org']['default_template'] : 'default';
+        return $this;
+    }
 
     /**
      *
@@ -54,7 +56,6 @@ class Processor
      */
     public function __construct()
     {
-        $this->cryptor = new FynxCryptor();
     }
 
     /*
@@ -95,6 +96,7 @@ class Processor
     {
         // $supposedString = $page_request_url;
         // make sure the path does not end with '/'
+        $template_name = $this->template_name();
         if (substr($page_request_url, -1) == '/') {
             $page_request_url = substr($page_request_url, 0, -1);
         }
@@ -136,7 +138,7 @@ class Processor
     | Redirect to given URL parameter.
     |
      */
-    protected function redirect($url = null)
+    public function redirect($url = null)
     {
         $get_data = '?';
         if ($url != null) {
@@ -146,7 +148,7 @@ class Processor
                 }
             }
             $get_data = substr($get_data, 0, -1);
-            new Template();
+            // new Template();
             header("Location: " . FYNX_PUBLIC['url'] . $url . $get_data);
         } else {
             $this->error();
@@ -193,6 +195,11 @@ class Processor
         return $string;
     }
 
+    // public function generate_code($digits = 40, $options = null)
+    // {
+    //     $this->generate_code($digits, $options);
+    // }
+
     /*
     |--------------------------------------------------------------------------
     | GUID Generator
@@ -224,10 +231,57 @@ class Processor
 
     /*
     |--------------------------------------------------------------------------
-    | View Table Records
+    | Create Database
     |--------------------------------------------------------------------------
     |
-    | View all Records of a particular Table from the Database. Enter Table Name
+    | Selects a Database if it already exist, or creates it with quick connections
+    |
+     */
+    protected function select_database($arrayData = null, $dbName = null)
+    {
+        if (is_null($arrayData) || empty($arrayData) || !is_array($arrayData) || is_null($dbName) || empty($dbName)) {
+            return false;
+        }
+
+        $this->conn = @mysqli_connect($arrayData['db_host'], $arrayData['db_user'], $arrayData['db_pass']);
+
+        if (!$this->conn) {
+            @mysqli_close();
+            return 'Connection to schema failed!';
+        }
+
+        $this->selectdb = @mysqli_select_db($this->conn, $dbName);
+        if (!$this->selectdb) {
+            $this->createdb = @mysqli_query($this->conn, "CREATE DATABASE IF NOT EXISTS `" . $dbName . "`");
+            if (!$this->createdb) {
+                return 'Unable to create database!';
+            }
+        }
+        return true;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Show Table
+    |--------------------------------------------------------------------------
+    |
+    | This function gets all, or creates the schema of Table
+    |
+     */
+    protected function show_table($table = null)
+    {
+        $stm_action = !is_null($table) ? 'CREATE' : 'FULL';
+        $stm_tbl = !is_null($table) ? 'TABLE' : 'TABLES';
+        $this->object = "SHOW {$stm_action} {$stm_tbl} {$table}";
+        return $this;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Create View Table Records
+    |--------------------------------------------------------------------------
+    |
+    | Create View Records of a particular Table from the Database. Enter Table Name
     | and Field List in the parameter provided  e.g: $table = 'school_tbl' and
     | $field = 'id, name, email'. Leave Field Parameter to take Default value "*"
     |
@@ -274,7 +328,7 @@ class Processor
      */
     protected function get_record($table = null, $field = '*', $pager = null)
     {
-        if (is_null($table)) {
+        if (is_null($table) && $field == '*') {
             $data = array(
                 'code' => '605',
                 'subject' => 'Missing Requested Data!',
@@ -283,17 +337,21 @@ class Processor
             $this->error($data);
         }
 
+        if (!is_null($table) && !empty($table)) {
+            $table = ' FROM ' . $table;
+        }
+
         $pagination = "";
         if (!is_null($pager)) {
             if (is_array($pager)) {
                 $limit = $pager['limit'];
                 $offset = ($pager['page'] - 1) * $limit;
-                $pagination = "LIMIT {$offset}, {$limit}";
+                $pagination = " LIMIT {$offset}, {$limit}";
             }
         }
 
         $this->field = $field;
-        $this->object = "SELECT {$this->field} FROM {$table} " . $pagination;
+        $this->object = "SELECT {$this->field}" . $table . $pagination;
         return $this;
     }
 
@@ -303,11 +361,64 @@ class Processor
     |--------------------------------------------------------------------------
     |
     | Add Records into a particular Table of a Database. Enter Table Name
-    | and $_POST constant object parameter to use method e.g: $table = 'school_tbl'
-    | and $request = $_POST.
+    | and $_POST constant object parameter or an associated array to use method e.g:
+    | $table = 'school_tbl' and $request = $_POST.
     |
      */
-    protected function add_record($table = null, $request = null)
+    protected function add_record($table = null, $request = null, $method = null)
+    {
+        $field_stack = $multi_value_stack = $value_stack = null;
+        $headerDisplayed = false;
+
+        if (is_null($request) || is_null($table)) {
+            $data = array(
+                'code' => '605',
+                'subject' => 'Missing Requested Data!',
+                'message' => 'There is no $_POST data array or Table name sent to this method. Check your send form.',
+            );
+            $this->error($data);
+        }
+
+        $counter = 1;
+        if ($method == 'multi') {
+            foreach ($request as $key => $value) {
+                $multi_value_stack .= "(";
+                foreach ($value as $mKey => $mValue) {
+                    if (!$headerDisplayed) {
+                        $field_stack = $field_stack . "`" . trim($mKey) . "`" . ", ";
+                        if ($counter == count($value)) {$headerDisplayed = true;}
+                        $counter++;
+                    }
+                    $multi_value_stack = $multi_value_stack . "'" . $mValue . "', ";
+                }
+                $multi_value_stack = substr($multi_value_stack, 0, -2) . "), ";
+            }
+        } else {
+            foreach ($request as $key => $value) {
+                $field_stack = $field_stack . "`" . trim($key) . "`" . ", ";
+                $value = $this->escape($value);
+                $value = "IF('" . $value . "' = '', NULL, '" . $value . "')";
+                $value_stack = $value_stack . $value . ", ";
+            }
+        }
+
+        $field_stack = substr($field_stack, 0, -2);
+        $value_stack = $method == 'multi' ? substr($multi_value_stack, 0, -2) : "(" . substr($value_stack, 0, -2) . ")";
+        $this->object = "INSERT INTO {$table} ({$field_stack}) VALUES {$value_stack}";
+        return $this;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Add or Update Into Table Records
+    |--------------------------------------------------------------------------
+    |
+    | Add or Update Records into a particular Table of a Database. Enter Table Name
+    | and $_POST constant object parameter or an associated array to use method e.g:
+    | $table = 'school_tbl' and $request = $_POST.
+    |
+     */
+    protected function replace_record($table = null, $request = null)
     {
         $field_stack = $value_stack = null;
         if (is_null($request) || is_null($table)) {
@@ -326,7 +437,7 @@ class Processor
         }
         $field_stack = substr($field_stack, 0, -2);
         $value_stack = substr($value_stack, 0, -2);
-        $this->object = "INSERT INTO {$table} ({$field_stack}) VALUES ({$value_stack})";
+        $this->object = "REPLACE INTO {$table} ({$field_stack}) VALUES ({$value_stack})";
         return $this;
     }
 
@@ -344,7 +455,7 @@ class Processor
     protected function delete_record($table = null, $request = null)
     {
         $where_stack = null;
-        if (is_null($request) || is_null($table)) {
+        if (is_null($table)) {
             $data = array(
                 'code' => '605',
                 'subject' => 'Missing Requested Data!',
@@ -352,11 +463,15 @@ class Processor
             );
             $this->error($data);
         }
-        foreach ($request as $key => $value) {
-            $where_stack = $where_stack . trim($key) . "=" . "'" . $this->escape($value) . "' AND ";
+        if (!is_null($request)) {
+            foreach ($request as $key => $value) {
+                $where_stack = $where_stack . trim($key) . "=" . "'" . $this->escape($value) . "' AND ";
+            }
+            $where_stack = 'WHERE ' . substr($where_stack, 0, -5);
+        } else {
+            $where_stack = '';
         }
-        $where_stack = substr($where_stack, 0, -5);
-        $this->object = "DELETE FROM $table WHERE $where_stack";
+        $this->object = "DELETE FROM {$table} {$where_stack}";
         return $this;
     }
 
@@ -371,7 +486,7 @@ class Processor
     | use of where() method.
     |
      */
-    protected function update_record($table = null, $request = null, $method = 1)
+    protected function update_record($table = null, $request = null, $method = null)
     {
         $key_value_stack = null;
         if (is_null($request) || is_null($table)) {
@@ -383,13 +498,13 @@ class Processor
             $this->error($data);
         }
         foreach ($request as $key => $value) {
-            if ($method == 1) {
+            if ($method != 'multi') {
                 $value = $this->escape($value);
                 $value = "IF('" . $value . "' = '', NULL, '" . $value . "')";
             }
-            $key_value_stack = $key_value_stack . trim($key) . " = " . $value . ",";
+            $key_value_stack = $key_value_stack . trim($key) . " = " . $value . ", ";
         }
-        $key_value_stack = substr($key_value_stack, 0, -1);
+        $key_value_stack = substr($key_value_stack, 0, -2);
         $this->object = "UPDATE $table SET $key_value_stack";
         return $this;
     }
@@ -467,7 +582,7 @@ class Processor
     {
         switch ($queryType) {
             case 'cross':
-                return $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2;
+                return $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2 . $this->option;
                 break;
             case 'inner':
                 return $this->object . " INNER JOIN " . $this->table2 . " " . $this->table2 . $this->option;
@@ -492,7 +607,7 @@ class Processor
     |
     | Get all Records of different joined Tables from the Database. Four options
     | can be used on the go() method; CROSS, INNER, LEFT and RIGHT. User join()
-    | method with to(), on() and using() e.g.
+    | method with to(), on(), and_on() and using() e.g.
     | join('table1', 'T1-field1, T1-field2')->to(table2', 'T2-field1, T2-field2')
     | ->on(T1-field, T2-field)->go('inner');
     |
@@ -582,6 +697,30 @@ class Processor
         }
     }
 
+    protected function and_on($a = null, $b = null, $state = null)
+    {
+        if (!is_null($a) && !is_null($b)) {
+            $state == 1 ? $and = " AND " . $this->table1 . "." . $a . " = '" . $b . "'" : $and = " AND " . $this->table1 . "." . $a . " = " . $this->table2 . "." . $b;
+            $this->option = $this->option . $and;
+            return $this;
+        } else {
+            $this->option = false;
+            return $this;
+        }
+    }
+
+    protected function where_on($a = null, $b = null, $opt = '=')
+    {
+        if (!is_null($a) && !is_null($b)) {
+            $where = " WHERE " . $this->table1 . "." . $a . " " . $opt . " '" . $b . "'";
+            !isset($this->option) ? $this->option = $where : $this->option = $this->option . $where;
+            return $this;
+        } else {
+            $this->option = false;
+            return $this;
+        }
+    }
+
     protected function using($field = null)
     {
         if (!is_null($field)) {
@@ -617,8 +756,28 @@ class Processor
 
     protected function order_by($order = null, $sort = 'DESC')
     {
+        $sort = empty($sort) ? "" : " " . $sort;
         if (!is_null($order) && $this->object != false) {
-            $this->object = $this->object . " ORDER BY " . $order . " " . $sort;
+            if (is_array($order)) {
+                foreach ($order as $key => $value) {
+                    $order = " ORDER BY FIELD(" . $key . ", " . $value . $sort;
+                }
+            } else {
+                $order = " ORDER BY " . $order . $sort;
+            }
+            $this->object = $this->object . $order;
+            return $this;
+        } else {
+            $this->object = false;
+            return $this;
+        }
+    }
+
+    protected function and_by($order = null, $sort = 'DESC')
+    {
+        $sort = empty($sort) ? "" : " " . $sort;
+        if (!is_null($order) && $this->object != false) {
+            $this->object = $this->object . ", " . $order . $sort;
             return $this;
         } else {
             $this->object = false;
@@ -677,7 +836,7 @@ class Processor
                 endif;
                 break;
             case 'cross':
-                $this->object = $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2;
+                $this->object = $this->object . " CROSS JOIN " . $this->table2 . " " . $this->table2 . $this->option;
                 if ($db->query($this->object) === true): $output = $db->fetch($option);
                     if (!empty($output)): return $output;
                     else:return array();
@@ -724,6 +883,16 @@ class Processor
                     endif;
                 endif;
                 break;
+            case 'show':
+                if ($db->query($this->object) === true): $output = array();
+                    while ($row = $db->fetch($option)) {
+                        $output[] = $row[0];
+                    }
+                    if (!empty($output)): return $output;
+                    else:return array();
+                    endif;
+                endif;
+                break;
 
             default:
                 if (strpos(serialize($this->object), 'SELECT')):
@@ -734,9 +903,8 @@ class Processor
                     endif;
                 else:
                     if ($db->query($this->object) === true):
-                        if ($db->affected_rows()):
-                            print_r("<h3>WARNING!</h3>Please use the Redirect() function to call up your Requested Page");
-                            return true;
+                        if ($db->affected_rows()): return true;
+                        else:return false;
                         endif;
                     endif;
                 endif;

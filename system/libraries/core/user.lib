@@ -606,7 +606,7 @@ class FynxUser extends Processor
                 'user_role' => $data['access'],
                 'user_name' => strtolower($data['firstname'] . '.' . $data['lastname']),
                 'user_email' => $data['email'],
-                'org_id' => $data['org_id'],
+                'org_id' => isset($data['org_id']) ? $data['org_id'] : 'ORG',
             ];
             $detail_array = [
                 'user_id' => $user_array['user_id'],
@@ -617,7 +617,7 @@ class FynxUser extends Processor
                 'address' => 'NIL',
                 'email' => $data['email'],
                 'phone' => isset($data['phone']) ? $data['phone'] : 'NIL',
-                'org_id' => $data['org_id'],
+                'org_id' => isset($data['org_id']) ? $data['org_id'] : 'ORG',
             ];
             if ($data['access'] == 2) {
                 $detail_array['employee_id'] = '001';
@@ -636,8 +636,8 @@ class FynxUser extends Processor
             if (!empty($inserted_user) && !empty($inserted_detail) && !empty($inserted_org)) {
                 $this->access = true;
             } else {
-                $this->add_record($this->_userTableName)->where('org_id', $org_array['org_id'])->go();
-                $this->add_record($this->_orgTableName)->where('org_id', $org_array['org_id'])->go();
+                $this->add_record($this->_userTableName)->where('user_id', $org_array['user_id'])->go();
+                $this->add_record($this->_orgTableName)->where('org_id', isset($org_array['org_id']) ? $org_array['org_id'] : 'ORG')->go();
                 $this->access = 'registration_failed';
             }
         } else { $this->access = $verify_response;}
@@ -849,8 +849,8 @@ class FynxUser extends Processor
         $verify_response = $this->_verify_login_user($data);
         $register_data = [
             'user_id' => $verify_response[0]['user_id'],
-            'org_id' => $data['org_id'],
-            'user_email' => $data['user_email'],
+            'org_id' => $verify_response[0]['org_id'],
+            'user_email' => $verify_response[0]['user_email'],
         ];
         $new_session = $this->_register_session($register_data);
         if ($new_session === true) {
@@ -872,7 +872,8 @@ class FynxUser extends Processor
      **/
     private function _check_user_email($data)
     {
-        $check_email = $this->get_record($this->_userTableName)->where('org_id', $data['org_id'])->and_where('user_email', $data['email'])->limit(1)->go();
+        $org=isset($data['org_id']) ? $data['org_id'] : 'ORG'
+        $check_email = $this->get_record($this->_userTableName)->where('org_id', $org)->and_where('user_email', $data['email'])->limit(1)->go();
 
         if (empty($check_email)) {
             return false;

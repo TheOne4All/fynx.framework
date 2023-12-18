@@ -703,6 +703,17 @@ class Helpers
         return rtrim($redirect_url, '/');
     }
 
+    public function installer()
+    {
+        if (file_exists(FYNX_DIR . 'install/app/configs/app.cfg')) {
+            $configFileContent = @file_get_contents(FYNX_DIR . 'install/app/configs/app.cfg', true);
+            $installed = strpos($configFileContent, "'installation' => false,") !== false ? true : false;
+            if ($installed === true) {
+                header("Location: " . FYNX_URL . "install");
+            }
+        } else {echo "File does not Exist!";}
+    }
+
     public function tenant($id = null)
     {
         if (!is_null($id)) {

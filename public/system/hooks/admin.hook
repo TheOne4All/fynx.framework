@@ -1,0 +1,119 @@
+<?php
+
+use PHPMailer\PHPMailer\PHPMailer;
+
+class Admin extends FynxUser
+{
+    public function __construct()
+    {
+        require_once FYNX_PUBLIC['system'] . 'libraries/phpmailer/src/PHPMailer.php';
+        require_once FYNX_PUBLIC['system'] . 'libraries/phpmailer/src/Exception.php';
+        require_once FYNX_PUBLIC['system'] . 'libraries/phpmailer/src/SMTP.php';
+        require_once FYNX_PUBLIC['system'] . 'libraries/helpers.lib';
+
+        $this->mail = new PHPMailer(true);
+        $this->helpers = new Helpers;
+        $this->user = new FynxUser;
+        $this->helpers->installer();
+    }
+
+    public function signin()
+    {
+        $this->user->is_login() === true ? $this->redirect('dashboard') : null;
+        $this->show('resources/auth/signin');
+    }
+
+    public function login()
+    {
+        $this->user->is_login() === true ? $this->redirect('dashboard') : null;
+        $response = $this->user->login_user($_POST);
+        if ($response === 'session_already_exist') {
+            echo "<h1>SESSION ALREADY EXISTS</h1>";
+        } elseif ($response === true) {
+            $this->redirect('dashboard');
+        } else {
+            $this->with('danger', 'Wrong Sign-in Credentials!')->redirect('admin/signin/');
+        }
+    }
+
+    public function signup()
+    {
+        $this->user->is_login() === true ? $this->redirect('dashboard') : null;
+        $this->show('resources/auth/signup');
+    }
+
+    public function register($send_email = false, $auto_pwd = false)
+    {
+        $this->user->is_login() === true ? $this->redirect('dashboard') : null;
+
+        // generate random password and embed in POST data
+        if ($auto_pwd === true) {
+            $_POST['password'] = $this->random_str(12);
+        } else {
+            if (!isset($_POST['password']) && $auto_pwd === false) {
+                $this->with('danger', 'Empty Password')->redirect('admin/signup/');
+            }
+        }
+        $response = $this->user->register_user($_POST);
+        if ($response === true) {
+
+            // send email confirmation
+            if ($send_email === true) {
+                $email = [
+                    'from' => 'doNotReply@jencube.com',
+                    'fromName' => 'Jencube Team',
+                    'to' => $_POST['user_email'],
+                    'subject' => 'Authentication Credentials',
+                    'body' => '<strong>Login Credentials</strong><p></p>Username: ' . $_POST['user_email'] . '<br>Password: ' . $_POST['password'],
+                ];
+                $sent = $this->user->email_confirmation($email);
+                if ($sent === true) {
+                    $alert = 'success';
+                    $message = 'Confirmation E-mail Sent Successfully!';
+                } else {
+                    $alert = "danger";
+                    $message = 'E-mail Failure Delivery!';
+                }
+            } else {
+                $alert = "success";
+                $message = 'Account Sign-Up was Successful!';
+            }
+            $this->with($alert, $message)->redirect('admin/signin/');
+        } else {
+            $this->with('danger', ucwords(str_replace('_', ' ', $response)))->redirect('admin/signup');
+        }
+    }
+
+    public function signout()
+    {
+        if (isset($_GET['alert']) && $_GET['alert'] == 2) {
+            $this->user->unset_session();
+        } else {
+            $this->user->logout();
+        }
+        if (isset($_GET['alert'])) {
+            switch ($_GET['alert']) {
+                case '1':
+                    $notice = 'info';
+                    $message = "Your Session has Expired!";
+                    break;
+                case '2':
+                    $notice = 'danger';
+                    $message = "Connected from another Computer!";
+                    break;
+                case '3':
+                    $notice = 'info';
+                    $message = "Already logged out!";
+                    break;
+
+                default:
+                    $notice = 'success';
+                    $message = 'Signed-Out Successfully!';
+                    break;
+            }
+            $this->with($notice, $message)->redirect('admin/signin');
+        }
+        $this->with('success', 'Signed-Out Successfully!')->redirect('admin/signin');
+    }
+
+}

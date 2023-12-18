@@ -529,7 +529,8 @@ class FynxDatabase
 
         // var_dump(file_exists($this->fileDirectory));
         require_once $this->fileDirectory;
-        $this->db = FYNX_APP['installation'] !== false ? new $this->_dbClassName($dbConfig) : null;
+        $this->db = new $this->_dbClassName($dbConfig);
+        // $this->db = FYNX_APP['installation'] !== false ? new $this->_dbClassName($dbConfig) : null;
 
     }
 

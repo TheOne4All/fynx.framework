@@ -9,28 +9,7 @@
     Document Title
     =============================================
     -->
-    <title>SPROUT</title>
-    <!--
-    Favicons
-    =============================================
-    -->
-    <link rel="apple-touch-icon" sizes="57x57" href="assets/images/favicons/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="assets/images/favicons/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="assets/images/favicons/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="assets/images/favicons/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="assets/images/favicons/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="assets/images/favicons/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="assets/images/favicons/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/favicons/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/favicons/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/images/favicons/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="assets/images/favicons/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicons/favicon-16x16.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="assets/images/favicons/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+    <title><?=FYNX_APP['name']?></title>
     <!--
     Stylesheets
     =============================================
@@ -38,9 +17,6 @@
     -->
     <!-- Default stylesheets-->
     <link href="<?=FYNX_PUBLIC['template_url']?>default/assets/lib/bootstrap/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-    <!-- Template specific stylesheets-->
-    <link href="<?=FYNX_PUBLIC['template_url']?>default/assets/lib/owl.carousel/dist/assets/owl.carousel.css"
         rel="stylesheet">
     <!-- Main stylesheet and color file-->
     <link href="<?=FYNX_PUBLIC['template_url']?>default/assets/css/style.css" rel="stylesheet">
@@ -65,23 +41,22 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="subscribe">
+                    <div class="subscribe">
                         <div class="row">
                             <div
                                 class="col-xs-10 col-xs-offset-1 col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4 input-group subscribe-box">
-                                <form class="subscribe-form" id="subscription-form">
-                                    <div class="input-group">
-                                        <input class="form-control notify-me" id="subscriber-email" name="email"
-                                            type="email" placeholder="Enter your email address" required=""><span
-                                            class="input-group-addon">
-                                            <input class="btn btn-default notify-me" id="subscribe-button" type="submit"
-                                                value="NOTIFY ME"></span>
-                                    </div>
-                                </form>
-                                <div id="subscription-response"></div>
+                                <?php if (isset($_SESSION['authenticated'])) {?>
+                                <a href="<?=FYNX_PUBLIC['url'] . 'dashboard'?>"
+                                    class="btn bg-primary m-2 p-1">Dashboard</a>
+                                <?php } else {?>
+                                <a href="<?=FYNX_PUBLIC['url'] . 'admin/signin'?>" class="btn bg-primary"
+                                    style="margin-right:20px;">Login</a>
+                                <a href="<?=FYNX_PUBLIC['url'] . 'admin/signout'?>" class="btn bg-primary">Register</a>
+                                <?php }?>
+                                ?>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </section>

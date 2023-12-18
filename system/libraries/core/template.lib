@@ -1,5 +1,7 @@
 <?php
 
+// global $autoLoader;
+
 /**
  *
  * The Template class is a flexible libraby responsible for rendering
@@ -17,7 +19,10 @@
  *
  **/
 
+require_once FYNX_SYSTEM['system'] . 'autoloader.php';
 require_once 'pagination.lib';
+require_once FYNX_PUBLIC['system'] . 'libraries/helpers.lib';
+require_once FYNX_PUBLIC['system'] . 'libraries/fpdf.lib';
 
 class Template extends Processor
 {
@@ -69,12 +74,19 @@ class Template extends Processor
     | Class constructor initialization to set the Variables
     |
      */
-    public function __construct($file_path = null, $data = null)
+    public function __construct($template_name, $file_path = null, $data = null)
     {
         $this->file_path = $file_path;
         $this->data = $data;
+        $this->template_name = $template_name;
         $this->master_path = null;
         $this->pagination = new FynxPagination();
+        $this->helpers = new Helpers;
+        $autoLoader = new Autoloader;
+        $helper_addons = ($autoLoader->load_files(FYNX_PUBLIC['system'] . 'helpers', 2));
+        foreach ($helper_addons as $key => $value) {
+            $this->{$key} = $value;
+        }
     }
 
     /*
@@ -139,7 +151,7 @@ class Template extends Processor
                 ${$key} = $value;
             }
         }
-        if (file_exists(FYNX_PUBLIC['template'] . strtolower($master_path) . '.tpl')) {
+        if (!is_null($master_path) && file_exists(FYNX_PUBLIC['template'] . strtolower($master_path) . '.tpl')) {
             require_once FYNX_PUBLIC['template'] . strtolower($master_path) . '.tpl';
         } else {
             require_once $this->master_content;
@@ -159,7 +171,7 @@ class Template extends Processor
     {
         $this->file_path_content = file_get_contents($this->file_path);
         if (strpos($this->file_path_content, '[begin-extend-template]') !== false) {
-            $this->master_path = $this->get_content_between('[begin-extend-template]', '[end]', $this->file_path_content);
+            $this->master_path = $this->template_name . '/' . $this->get_content_between('[begin-extend-template]', '[end]', $this->file_path_content);
         }
         $this->extend_template($this->master_path, $this->file_path, $this->data);
     }
@@ -230,7 +242,7 @@ class Template extends Processor
 
     public function modal_body($data = null, $content = null)
     {
-        $this->classlistArray = explode(' ', $this->classlist);
+        $this->classlistArray = !is_null($this->classlist) ? explode(' ', $this->classlist) : ['slide-up'];
         switch ($this->classlistArray) {
             case in_array('fill-in', $this->classlistArray):
                 echo '
@@ -238,13 +250,9 @@ class Template extends Processor
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     <i class="feather icon-x fs-16"></i>
                     </button>';
-                if (!is_null($this->title)): echo '
-																					                    <div class="modal-dialog ">
-																					                    <div class="modal-content">
-																					                    <div class="modal-header">
-																					                        <h4 class="text-left pb-5">' . $this->title . '</h4>
-																					                    </div>
-																					                    <div class="modal-body">';endif;
+                if (!is_null($this->title)) {
+                    echo '<div class="modal-dialog "><div class="modal-content"><div class="modal-header"><h4 class="text-left pb-5">' . $this->title . '</h4></div><div class="modal-body">';
+                }
                 break;
 
             case in_array('slide-right', $this->classlistArray):
@@ -262,7 +270,7 @@ class Template extends Processor
                 break;
 
             default:
-                $modal_header_title_class = $this->size == 'sm' ? null : $_SESSION['org']['default_theme'];
+                $modal_header_title_class = ($this->size == 'sm') ? null : $_SESSION['org']['default_theme'];
                 echo '
                 <section class="modal ' . $this->classlist . '" id="' . $this->name_key . '" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
                 <div class="modal-dialog modal-' . $this->size . '">

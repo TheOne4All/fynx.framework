@@ -1,3 +1,4 @@
+<IfModule mod_rewrite.c> 
 Options -Multiviews
 
 DirectoryIndex index.htm index.html index.php index.tpl
@@ -6,11 +7,12 @@ AddType application/x-httpd-php .tpl .hook .lib .dbs .tbl
 
 RewriteEngine On 
 
+
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-
 RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+# RewriteRule ^public/(.*)$ /$1 [L,R=301,QSA]
 
-ErrorDocument 403 /resources/pages/errors/403.tpl
-ErrorDocument 404 /resources/pages/errors/404.tpl
-ErrorDocument 500 /resources/pages/errors/500.tpl
+# RewriteRule ^$ /japa/public/ [L]
+
+</IfModule>

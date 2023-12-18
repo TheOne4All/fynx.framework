@@ -516,18 +516,10 @@ class FynxDatabase
     public function __construct($config = array())
     {
 
-        // $sysConfigDir = SYSTEM['configs'] . 'sys.cfg';
-
-        // if ( ! file_exists( $sysConfigDir ) ) {
-        //   // log here: Config file doesn't exist
-        //   return FALSE;
-        // }
-
-        // $this->_sysConfig = include( $sysConfigDir );
         $this->_sysConfig = (!defined('FYNX_SYSCONFIG')) ? require_once FYNX_SYSTEM['configs'] . 'sys.cfg' : FYNX_SYSCONFIG;
         // var_dump($this->_sysConfig);
         $dbConfig = $this->_sysConfig['connections'][$this->_sysConfig['default_db']];
-        // print_r($this->_sysConfig);
+        // print_r($dbConfig);
 
         $this->_dbEngineDir = (isset($dbConfig['db_engine_directory'])) ? $dbConfig['db_engine_directory'] : $this->_dbEngineDir;
         $this->_dbFilename = (isset($dbConfig['db_filename'])) ? $dbConfig['db_filename'] : $this->_dbFilename;
@@ -535,10 +527,9 @@ class FynxDatabase
         $this->fileDirectory = (isset($dbConfig['db_file_directory'])) ? $dbConfig['db_file_directory'] : $this->_set_directory();
         $this->_dbClassName = (isset($dbConfig['db_class_name'])) ? $dbConfig['db_class_name'] : $this->_dbClassName;
 
-        //var_dump(file_exists($dbConfig['db_file_directory']));
+        // var_dump(file_exists($this->fileDirectory));
         require_once $this->fileDirectory;
-        $this->db = new $this->_dbClassName($dbConfig);
-        // var_dump( $this->db->is_connected() );
+        $this->db = FYNX_APP['installation'] !== false ? new $this->_dbClassName($dbConfig) : null;
 
     }
 

@@ -2,14 +2,12 @@
 
 class Pages extends Processor
 {
+    public function __construct($tenantId = null)
+    {}
 
-    public function __construct()
+    public function index()
     {
-
+        $this->show('resources/index');
     }
 
-    public function landing()
-    {
-        $this->with('greetings', 'Guest')->with('name', 'FYNX')->show('resources/pages/landing');
-    }
 }

@@ -421,7 +421,7 @@ class MySQLiDB
             $queryResult = $this->_query;
         }
 
-        if (@mysqli_free_result($queryResult)) {
+        if (!is_null($queryResult) || @mysqli_free_result($queryResult)) {
             $this->_clearQuery = true;
             // Log this: Query results free from memory successfully
             return true;
@@ -486,6 +486,12 @@ class MySQLiDB
         }
 
         $this->_sqlQuery = (!is_null($SQL)) ? $SQL : $this->_sqlQuery;
+
+        if (!$this->_sqlQuery) {
+            // Log this: Unable to run this query: Mysql error $this->errorMsg
+            return $this->_sql_error();
+        }
+
         if ($method == 'multi') {
             $this->_query = @mysqli_multi_query($this->_conn, $this->_sqlQuery);
         } else {
@@ -856,7 +862,7 @@ class MySQLiDB
             $this->_query = $queryResult;
         }
 
-        $this->numRows = @mysqli_num_rows($this->_query);
+        $this->numRows = (!empty($this->_query) && $this->_query !== true) ? @mysqli_num_rows($this->_query) : false;
 
         if (!$this->numRows) {
             // Log this: Unable to get the number of rows in query result: Mysql error $this->errorMsg
@@ -883,7 +889,8 @@ class MySQLiDB
             $this->_query = $queryResult;
         }
 
-        $this->numFields = @mysqli_num_fields($this->_query);
+        $this->numFields = (!empty($this->_query) && $this->_query !== true) ? @mysqli_num_fields($this->_query) : false;
+        // $this->numFields = @mysqli_num_fields($this->_query);
 
         if (!$this->numFields) {
             // Log this: Unable to get the number of fields in query result: Mysql error $this->errorMsg
@@ -1061,6 +1068,10 @@ class MySQLiDB
         // Log here: escape() called
         if (!$this->is_connected()) {
             $this->_connect();
+        }
+
+        if (is_null($input)) {
+            return false;
         }
 
         if (is_array($input)) {

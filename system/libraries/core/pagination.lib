@@ -238,6 +238,7 @@ class FynxPagination
         }
 
         $this->totalResults = $data['total_results'];
+        $this->totalResultsCount = isset($data['total_results_count']) ? $data['total_results_count'] : count($data['total_results']);
         $this->listPerPage = (!empty($data['list_per_page'])) ? $data['list_per_page'] : $this->listPerPage;
         $this->currentPage = (!empty(isset($data['current_page']))) ? $data['current_page'] : 1;
         $pageNum = $this->currentPage - 1;
@@ -247,7 +248,8 @@ class FynxPagination
             $this->offSet = $pageNum * $this->listPerPage;
         endif;
 
-        $this->displayResults = array_slice($this->totalResults, $this->offSet, $this->listPerPage);
+        // $this->displayResults = array_slice($this->totalResults, $this->offSet, $this->listPerPage);
+        $this->displayResults = $this->totalResults;
         $this->pageLink = (!empty($data['page_url'])) ? $data['page_url'] : '#';
         $this->type = (!empty($data['type'])) ? $data['type'] : $this->type;
         $this->prevBtnText = (!empty($data['prev_btn'])) ? $data['prev_btn'] : $this->prevBtnText;
@@ -311,11 +313,14 @@ class FynxPagination
             default:
                 break;
         }
-        if ($endPageNum > count((array) $this->totalResults)) {
-            $endPageNum = count((array) $this->totalResults);
+        // if ($endPageNum > count((array) $this->totalResults)) {
+        //     $endPageNum = count((array) $this->totalResults);
+        // }
+        if ($endPageNum > (int) $this->totalResultsCount) {
+            $endPageNum = (int) $this->totalResultsCount;
         }
         $info = '<div class="dataTables_info" id="tableWithDynamicRows_info" role="status"
-    aria-live="polite">Showing <b>' . $startPageNum . ' to ' . $endPageNum . ' </b> of ' . count((array) $this->totalResults) . ' entrie(s)</div>';
+    aria-live="polite">Showing <b>' . $startPageNum . ' to ' . $endPageNum . ' </b> of ' . (int) $this->totalResultsCount . ' entrie(s)</div>';
         return $info;
     }
 
@@ -339,7 +344,8 @@ class FynxPagination
             return false;
         }
 
-        $this->totalNumPages = ceil(count((array) $this->totalResults) / $this->listPerPage);
+        // $this->totalNumPages = ceil(count((array) $this->totalResultsCount) / $this->listPerPage);
+        $this->totalNumPages = ceil((int) $this->totalResultsCount / $this->listPerPage);
         // $this->loop = $this->paging( $this->currentPage, $this->totalNumPages );
         $this->loop = $this->paging();
 

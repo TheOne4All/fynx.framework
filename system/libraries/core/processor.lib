@@ -20,6 +20,8 @@ ini_set('display_errors', true);
  *
  **/
 
+require_once 'cryptor.lib';
+
 class Processor
 {
     /**
@@ -32,7 +34,7 @@ class Processor
      **/
     protected function template_name()
     {
-        $this->template_name = isset($_SESSION['org']['default_template']) ? $_SESSION['org']['default_template'] : 'default';
+        $this->template_name = FYNX_TEMPLATE_NAME;
         return $this;
     }
 
@@ -56,6 +58,9 @@ class Processor
      */
     public function __construct()
     {
+        $this->cryptor = new FynxCryptor();
+        // $this->autoLoader = new Autoloader();
+        // $this->autoLoader->load_files(FYNX_PUBLIC['system'] . 'libraries/');
     }
 
     /*
@@ -107,7 +112,7 @@ class Processor
         $this->page_request_url = FYNX_PUBLIC['template'] . $this->template_name . strtolower($page_request_url) . '.tpl';
 
         if (file_exists($this->page_request_url)) {
-            $template = new Template($this->page_request_url, $this->data);
+            $template = new Template($this->template_name, $this->page_request_url, $this->data);
             $template->output();
         } else {
             $this->error();
@@ -171,10 +176,13 @@ class Processor
                 'code' => '404',
                 'subject' => 'Page Not Found!',
                 'message' => 'This Page Template Layout you are looking for does not exist.',
+                'template' => 'nepayatri',
             );
         }
-        $this->page_request_url = FYNX_PUBLIC['template'] . $this->template_name . '/resources/pages/errors/index.tpl';
-        $template = new Template($this->page_request_url, $data);
+        $frontpage_template = isset($data['template']) ? $data['template'] . '/' : null;
+        $page_request_url = file_exists(FYNX_PUBLIC['template'] . FYNX_TEMPLATE_NAME . '/resources/' . $frontpage_template) ? FYNX_PUBLIC['template'] . FYNX_TEMPLATE_NAME . '/resources/' . $frontpage_template : FYNX_PUBLIC['template'] . FYNX_TEMPLATE_NAME . '/resources/';
+        $this->page_request_url = $page_request_url . 'pages/errors/index.tpl';
+        $template = new Template(FYNX_TEMPLATE_NAME, $this->page_request_url, $data);
         $template->output();
         exit;
     }
@@ -194,11 +202,6 @@ class Processor
         $string = $db->escape($string);
         return $string;
     }
-
-    // public function generate_code($digits = 40, $options = null)
-    // {
-    //     $this->generate_code($digits, $options);
-    // }
 
     /*
     |--------------------------------------------------------------------------
@@ -221,9 +224,9 @@ class Processor
         assert(strlen($data) == 16);
 
         // Set version to 0100
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+        $data[6] = chr(ord($data[6])&0x0f | 0x40);
         // Set bits 6-7 to 10
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+        $data[8] = chr(ord($data[8])&0x3f | 0x80);
 
         // Output the 36 character UUID.
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
@@ -231,33 +234,27 @@ class Processor
 
     /*
     |--------------------------------------------------------------------------
-    | Create Database
+    | Pseudo-Random Number Generator (random_int)
     |--------------------------------------------------------------------------
     |
-    | Selects a Database if it already exist, or creates it with quick connections
+    | This function helps Generate a random string, using a cryptographically secure
+    | $length -> How many characters do we want?
+    | $keyspace -> A string of all possible characters to select from
     |
      */
-    protected function select_database($arrayData = null, $dbName = null)
-    {
-        if (is_null($arrayData) || empty($arrayData) || !is_array($arrayData) || is_null($dbName) || empty($dbName)) {
-            return false;
+    public function random_str(
+        $length,
+        $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#@&*_-'
+    ) {
+        $str = '';
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        if ($max < 1) {
+            throw new Exception('$keyspace must be at least two characters long');
         }
-
-        $this->conn = @mysqli_connect($arrayData['db_host'], $arrayData['db_user'], $arrayData['db_pass']);
-
-        if (!$this->conn) {
-            @mysqli_close();
-            return 'Connection to schema failed!';
+        for ($i = 0; $i < $length; ++$i) {
+            $str .= $keyspace[random_int(0, $max)];
         }
-
-        $this->selectdb = @mysqli_select_db($this->conn, $dbName);
-        if (!$this->selectdb) {
-            $this->createdb = @mysqli_query($this->conn, "CREATE DATABASE IF NOT EXISTS `" . $dbName . "`");
-            if (!$this->createdb) {
-                return 'Unable to create database!';
-            }
-        }
-        return true;
+        return $str;
     }
 
     /*
@@ -344,8 +341,8 @@ class Processor
         $pagination = "";
         if (!is_null($pager)) {
             if (is_array($pager)) {
-                $limit = $pager['limit'];
-                $offset = ($pager['page'] - 1) * $limit;
+                $limit = $pager[0];
+                $offset = ($pager[1] - 1) * $limit;
                 $pagination = " LIMIT {$offset}, {$limit}";
             }
         }
@@ -573,9 +570,9 @@ class Processor
     | Get String of Querys
     |--------------------------------------------------------------------------
     |
-    | Get String Value of Querys. Simply put at the end of a query with options.
-    | convert() contains four options; CROSS, INNER, LEFT and RIGHT. e.g.
-    | get_record(table)->convert();
+    | Get String Value of Querys. Simply put at the end of a query with optional
+    | parameter containing four options; CROSS, INNER, LEFT and RIGHT. e.g.
+    | get(cross);
     |
      */
     protected function get($queryType = null)

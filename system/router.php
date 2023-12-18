@@ -38,7 +38,7 @@ class Mapper
      * @var string
      *
      **/
-    protected $hook = 'landing';
+    protected $hook = 'index';
 
     /**
      *
@@ -116,11 +116,17 @@ class Mapper
                 $this->module = $url[0];
                 unset($url[0]);
                 require_once FYNX_PUBLIC['hooks'] . $this->module . '.hook';
-                $this->module = new $this->module;
+                isset($url[1]) ? $this->module = new $this->module($url[1]) : $this->module = new $this->module;
 
                 // filters for Funtions/Methods/Hooks name in Class
                 if (isset($url[1])) {
                     if (method_exists($this->module, $url[1])) {
+
+                        // exit if Functio/Method/Hooks is protected or private
+                        $reflection = new ReflectionMethod($this->module, $url[1]);
+                        if (!$reflection->isPublic()) {
+                            $this->getErrorPage();
+                        }
                         $this->hook = $url[1];
                         unset($url[1]);
 
@@ -130,10 +136,24 @@ class Mapper
                         // group all URL address properties to locate Funtions/Methods/Hooks in Class/Property/Module
                         call_user_func_array([$this->module, $this->hook], $this->props);
                     } else {
-                        $this->getErrorPage();
+                        if (method_exists($this->module, "index")) {
+                            call_user_func_array([$this->module, 'index'], []);
+                        } else {
+                            $this->getErrorPage();
+                        }
                     }
                 } else {
-                    $this->getErrorPage();
+                    if (method_exists($this->module, "index")) {
+                        $this->hook = "index";
+
+                        // filters for Parameters/Props as array
+                        $this->props = $url ? array_values($url) : [];
+
+                        // group all URL address properties to locate Funtions/Methods/Hooks in Class/Property/Module
+                        call_user_func_array([$this->module, $this->hook], $this->props);
+                    } else {
+                        $this->getErrorPage();
+                    }
                 }
             } else {
                 $this->getErrorPage();
@@ -153,6 +173,9 @@ class Mapper
 
             // convert and return the .htaccess rewrite URL into Arrays
             $url = explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL));
+            if (!isset($url[1])) {
+                $url[1] = "index";
+            }
             return $url;
         }
     }
